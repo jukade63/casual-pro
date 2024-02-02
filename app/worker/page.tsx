@@ -9,6 +9,7 @@ import retail from "../../public/retail.jpg";
 import manufacturing from "../../public/manufacturing.jpg";
 import agedCare from "../../public/aged-care.jpg";
 import customerService from "../../public/customer-service.jpg";
+import agriculture from "../../public/agriculture.jpg";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -87,13 +88,24 @@ const jobCategory = [
     description:
       "Join the customer service field, assisting and providing support to customers.",
   },
+  {
+    title: "Agriculture",
+    img: (
+      <Image
+        src={agriculture}
+        alt="Agriculture"
+        className="object-cover w-[150px]"
+      />
+    ),
+    description:
+      "Work in the agriculture sector, contributing to the production of crops and livestock.",
+  },
 ];
 
 function WorkerPage() {
   return (
     <>
       <Navbar />
-
       <div className="flex flex-col h-screen items-center max-w-6xl mx-auto">
         <div className="pt-5">
           <div className="flex items-center gap-2">
@@ -118,7 +130,7 @@ function WorkerPage() {
         <Link href="worker/sign-up" className={`${buttonVariants()} mt-10`}>
           Sign up
         </Link>
-        <h1 className="font-bold text-2xl my-5">
+        <h1 className="font-bold text-2xl mt-20 mb-8">
           Navigate Your Work Disciplines
         </h1>
         <div className="flex items-center justify-center gap-4 flex-wrap">

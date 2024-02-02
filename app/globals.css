@@ -58,4 +58,15 @@
   body {
     @apply bg-background text-foreground bg-blue-50;
   }
+  .shadcn-ui-dialog {
+    background-color: #eee;
+  }
+  
+  .shadcn-ui-dialog__content {
+    background-color: #fff;
+  }
+  
+  .shadcn-ui-dialog__overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 }

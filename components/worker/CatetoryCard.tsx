@@ -12,8 +12,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   description,
 }) => {
   return (
-    <div
-      className="p-2 bg-white rounded-md border border-gray-300 shadow-md grid grid-cols-2 gap-4 w-[350px] 
+    <div className="p-2 bg-white rounded-md border border-gray-300 shadow-md grid grid-cols-2 gap-4 w-[350px] 
     cursor-pointer hover:transform hover:scale-105 transition-transform duration-300"
     >
       <div className="col-span-1">

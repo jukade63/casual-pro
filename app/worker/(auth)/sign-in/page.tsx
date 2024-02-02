@@ -9,8 +9,8 @@ function page() {
         src={"/logo.png"}
         className="object-cover rounded-full"
         alt="app-logo"
-        width={150}
-        height={150}
+        width={125}
+        height={125}
       />
       <SignInForm />
     </div>
