@@ -3,10 +3,11 @@
 @tailwind utilities;
  
 
+
 @layer base {
   :root {
-    --background: (213, 73%, 48%);
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 0%;
+    --foreground: 0, 0%, 93%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
@@ -28,7 +29,7 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 0 0% 0%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
@@ -50,23 +51,14 @@
   }
 }
 
+
  
 @layer base {
   * {
-    @apply border-border text-blue-800;
+    @apply border-border text-blue-900;
   }
   body {
     @apply bg-background text-foreground bg-blue-50;
   }
-  .shadcn-ui-dialog {
-    background-color: #eee;
-  }
-  
-  .shadcn-ui-dialog__content {
-    background-color: #fff;
-  }
-  
-  .shadcn-ui-dialog__overlay {
-    background-color: rgba(0, 0, 0, 0.5);
-  }
+
 }

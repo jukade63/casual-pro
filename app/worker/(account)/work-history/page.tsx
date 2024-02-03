@@ -58,7 +58,6 @@ const WorkHistory: React.FC = () => {
       wage: "$90",
       completionStatus: "Completed",
     },
-    // Add more job entries as needed
   ];
 
   return (
@@ -67,7 +66,7 @@ const WorkHistory: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
         {workHistoryData.map((work, index) => (
           <div key={index} className="mb-4 bg-sky-100 p-4 rounded shadow-sm">
-            <h2 className="text-lg font-semibold mb-2">{work.jobPosition}</h2>
+            <h2 className="text-md font-semibold mb-2">{work.jobPosition}</h2>
             <div className="grid grid-cols-9 items-center">
               <Building2 size={16} className="col-span-1" />
               <p className="text-gray-600 text-sm col-span-8">{work.company}</p>

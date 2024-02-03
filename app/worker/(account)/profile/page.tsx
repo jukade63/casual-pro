@@ -1,24 +1,20 @@
 import { EditProfileModal } from "@/components/worker/EditProfileModal";
+import Education from "@/components/worker/profile/Education";
+import Experience from "@/components/worker/profile/Experience";
+import General from "@/components/worker/profile/General";
+import { ProfileTabs } from "@/components/worker/profile/ProfileTabs";
+import Skills from "@/components/worker/profile/Skills";
 import React from "react";
 
 const Profile = () => {
   return (
     <>
-      <h1>Worker Profile</h1>
-      <div className="max-w-2xl mx-auto mt-6 mb-4 p-6 bg-white shadow-md rounded-md">
-        <div className="mb-4">
-          <img alt="Profile" className="rounded-full w-32 h-32 object-cover" />
-        </div>
-        <div className="mb-2 font-semibold">Username: username</div>
-        <div className="mb-2 font-semibold">Email: email</div>
-        <div className="mb-2 font-semibold">Phone Number: phoneNumber</div>
-        <div className="mb-2 font-semibold">Address: address</div>
-        <div className="mb-2 font-semibold">
-          Available date: availableWorkTime
-        </div>
+      <h1>Profile</h1>
+      <div className="p-6 bg-[#f7c657] rounded-md mt-12">
+        <General />
       </div>
-      <div suppressHydrationWarning={true} className="w-full text-center" >
-        <EditProfileModal/>
+      <div className="mt-2">
+        <ProfileTabs />
       </div>
     </>
   );
