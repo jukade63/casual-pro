@@ -7,9 +7,6 @@ export class Education extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Worker, (worker) => worker.education)
-  worker: Worker;
-
   @Column()
   institution: string;
 
@@ -21,5 +18,8 @@ export class Education extends BaseEntity {
 
   @Column({ type: 'date' })
   grad_date: Date;
+
+  @ManyToOne(() => Worker, (worker) => worker.education)
+  worker: Worker;
 }
 

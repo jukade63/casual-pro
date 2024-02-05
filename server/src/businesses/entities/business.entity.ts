@@ -18,9 +18,6 @@ export class Business extends BaseEntity {
   @Column()
   description: string;
 
-  @Column({ nullable: true })
-  profile_img: string;
-
   @OneToMany(() => JobPost, (jobPost) => jobPost.business)
   jobPosts: JobPost[];
 }

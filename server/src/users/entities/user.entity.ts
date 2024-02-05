@@ -1,39 +1,48 @@
 import { Business } from 'src/businesses/entities/business.entity';
+import { AbstractEntity } from 'src/database/Abstract.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, BeforeInsert, OneToOne, JoinColumn, AfterInsert, } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import * as argon from 'argon2';
 
-enum UserType {
+export enum UserType {
   Worker = 'worker',
   Business = 'business',
 }
 
 @Entity()
-export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends AbstractEntity<User> {
+ 
   @Column()
   username: string;
 
-  @Column()
+  @Exclude()
+  @Column({ select: false })
   password: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
-  @Column({ type: 'enum', enum: UserType })
+  @Column({ type: 'enum', enum: UserType, })
   user_type: UserType;
 
   @Column({ nullable: true })
   phone_number: string;
 
   @Column({ nullable: true })
-  profile_img: string;
+  img_url: string;
 
-  @OneToMany(() => Worker, (worker) => worker.user)
-  workers: Worker[];
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await argon.hash(this.password);
+  }
 
-  @OneToMany(() => Business, (business) => business.user)
-  businesses: Business[];
+  @AfterInsert()
+  async createWorker() {
+    const worker = new Worker();
+    worker.user_id = this.id; 
+    await worker.save();
+  }
+
 }
 
