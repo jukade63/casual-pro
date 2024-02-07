@@ -12,10 +12,10 @@ export class Business extends BaseEntity {
   @JoinColumn()
   user: User;
 
-  @Column()
+  @Column({nullable: true})
   industry: string;
 
-  @Column()
+  @Column({nullable: true})
   description: string;
 
   @OneToMany(() => JobPost, (jobPost) => jobPost.business)

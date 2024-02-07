@@ -1,7 +1,7 @@
 import { JobPost } from 'src/job_posts/entities/job_post.entity';
 import { Ratings } from 'src/ratings/entities/rating.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 
 
 @Entity()
@@ -10,15 +10,17 @@ export class Jobs extends BaseEntity {
   id: number;
 
   @Column()
-  Completed: boolean;
+  completed: boolean;
 
-  @ManyToOne(() => JobPost, (jobPost) => jobPost.jobs)
+  @OneToOne(() => JobPost, (jobPost) => jobPost.job)
+  @JoinColumn()
   jobPost: JobPost;
 
-  @ManyToOne(() => Worker, (worker) => worker.jobs)
-  worker: Worker;
+  @ManyToMany(() => Worker, (worker) => worker.jobs)
+  @JoinTable()
+  workers: Worker[]
 
-  @ManyToOne(() => Ratings, (rating) => rating.job)
+  @OneToMany(() => Ratings, (rating) => rating.job)
   ratings: Ratings[];
 
 }

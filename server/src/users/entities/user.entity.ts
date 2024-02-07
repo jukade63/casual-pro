@@ -1,6 +1,4 @@
-import { Business } from 'src/businesses/entities/business.entity';
 import { AbstractEntity } from 'src/database/Abstract.entity';
-import { Worker } from 'src/workers/entities/worker.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, BeforeInsert, OneToOne, JoinColumn, AfterInsert, } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as argon from 'argon2';
@@ -17,7 +15,7 @@ export class User extends AbstractEntity<User> {
   username: string;
 
   @Exclude()
-  @Column({ select: false })
+  @Column()
   password: string;
 
   @Column({ unique: true })
@@ -35,13 +33,6 @@ export class User extends AbstractEntity<User> {
   @BeforeInsert()
   async hashPassword() {
     this.password = await argon.hash(this.password);
-  }
-
-  @AfterInsert()
-  async createWorker() {
-    const worker = new Worker();
-    worker.user_id = this.id; 
-    await worker.save();
   }
 
 }

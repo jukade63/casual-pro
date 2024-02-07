@@ -3,15 +3,18 @@ import { Education } from 'src/education/entities/education.entity';
 import { Experience } from 'src/experience/entities/experience.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
 import { Skills } from 'src/skills/entities/skill.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 
 @Entity()
 export class Worker extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  user_id: number;
+  
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
 
   @Column({ type: 'timestamptz', nullable: true })
   available_from: string;
@@ -31,8 +34,7 @@ export class Worker extends BaseEntity {
   @OneToMany(() => Applications, (application) => application.worker)
   applications: Applications[];
 
-  @OneToMany(() => Jobs, (job) => job.worker)
+  @ManyToMany(() => Jobs)
   jobs: Jobs[];
-
 }
 

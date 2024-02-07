@@ -1,15 +1,15 @@
 import { Applications } from 'src/applications/entities/application.entity';
 import { Business } from 'src/businesses/entities/business.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 
-enum JobType {
+export enum JobType {
   Casual = 'casual',
   PartTime = 'part-time',
   Temporary = 'temporary',
 }
 
-enum Status {
+export enum Status {
   Pending = 'pending',
   Approved = 'approved',
   Rejected = 'rejected',
@@ -21,6 +21,7 @@ export class JobPost extends BaseEntity {
   id: number;
 
   @ManyToOne(() => Business, (business) => business.jobPosts)
+  @JoinColumn()
   business: Business;
 
   @Column()
@@ -60,6 +61,6 @@ export class JobPost extends BaseEntity {
   applications: Applications[];
 
   @OneToOne(() => Jobs)
-  jobs: Jobs
+  job: Jobs
   
 }

@@ -1,6 +1,5 @@
-// src/entities/skills.entity.ts
 import { Worker } from 'src/workers/entities/worker.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()
 export class Skills extends BaseEntity {
@@ -8,6 +7,7 @@ export class Skills extends BaseEntity {
   id: number;
 
   @ManyToOne(() => Worker, (worker) => worker.skills)
+  @JoinColumn()
   worker: Worker;
 
   @Column()

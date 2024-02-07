@@ -1,11 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Applications } from './entities/application.entity';
 
 @Injectable()
 export class ApplicationsService {
-  create(createApplicationDto: CreateApplicationDto) {
-    return 'This action adds a new application';
+
+ 
+  constructor(
+    @InjectRepository(Applications)
+    private readonly applicationsRepository: Repository<Applications>) {}
+    
+  async create(createApplicationDto: CreateApplicationDto) {
+    const application = this.applicationsRepository.create(createApplicationDto);
+    return this.applicationsRepository.save(application);
   }
 
   findAll() {
@@ -13,7 +23,11 @@ export class ApplicationsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} application`;
+    const application = this.applicationsRepository.findOne({where: {id}, relations: ['worker', 'jobPost']});
+    if (!application) {
+      throw new Error(`Application with id ${id} not found`);
+    }
+    return application
   }
 
   update(id: number, updateApplicationDto: UpdateApplicationDto) {

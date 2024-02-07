@@ -24,7 +24,7 @@ export class JobsController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
-    return this.jobsService.update(+id, updateJobDto);
+    return this.jobsService.updateJobApplication(+id, updateJobDto.applicationId);
   }
 
   @Delete(':id')
