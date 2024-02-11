@@ -2,6 +2,7 @@ import { AbstractEntity } from 'src/database/Abstract.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, BeforeInsert, OneToOne, JoinColumn, AfterInsert, } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as argon from 'argon2';
+import { Business } from 'src/businesses/entities/business.entity';
 
 export enum UserType {
   Worker = 'worker',
@@ -29,6 +30,9 @@ export class User extends AbstractEntity<User> {
 
   @Column({ nullable: true })
   img_url: string;
+
+  @OneToOne(() => Business, business => business.user)
+  business: Business;
 
   @BeforeInsert()
   async hashPassword() {

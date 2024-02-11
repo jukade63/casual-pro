@@ -106,7 +106,7 @@ function Dashboard() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {performanceIndexes.map((item) => (
-            <div className="p-4 bg-teal-900 rounded-md shadow-md">
+            <div className="p-4 bg-teal-900 rounded-md shadow-md" key={item.title}>
               <div className="min-w-[200px] mb-4 flex gap-2 items-start justify-between">
                 <h2 className="text-lg font-semibold text-white mb-2">{item.title}</h2>
                 {item.icon}

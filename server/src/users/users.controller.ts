@@ -10,7 +10,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Post()
+  @Post('worker')
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createWorkerUser(createUserDto);
   }

@@ -5,9 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JobPost } from './entities/job_post.entity';
 import { Applications } from 'src/applications/entities/application.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { User } from 'src/users/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([JobPost, Applications, Jobs])],
+  imports: [TypeOrmModule.forFeature([JobPost, Applications, Jobs, User]), JwtModule.register({})],
   controllers: [JobPostsController],
   providers: [JobPostsService],
 })

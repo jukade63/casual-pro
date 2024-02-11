@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { BACKEND_URL } from "@/lib/constants";
+import { useState } from "react";
 
 const formSchema = z
   .object({
@@ -27,14 +29,16 @@ const formSchema = z
     password: z
       .string()
       .min(3, { message: "Password must be at least 8 characters." }),
-    confirmPassword: z.string()
-  }).refine((data) => data.confirmPassword === data.password, {
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.confirmPassword === data.password, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
-  })
- 
+  });
 
 export function SignUpForm() {
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,9 +49,27 @@ export function SignUpForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    // Add your form submission logic here
+    try {
+      const response = await fetch(BACKEND_URL + "/users/worker", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...values,
+          user_type: "worker",
+        }),
+      });
+      if (response.ok) {
+        setSuccess(true);
+      }
+    } catch (error) {
+      setError(true);
+    } finally {
+      form.reset();
+    }
   }
 
   return (
@@ -108,7 +130,8 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-
+        {success && <div className="text-green-500"> == Success ==</div>}
+        {error && <div className="text-red-500"> == Error ==</div>}
         <div className="flex justify-center">
           <Button type="submit">Sign Up</Button>
         </div>

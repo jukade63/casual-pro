@@ -15,6 +15,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
 
 const formSchema = z.object({
   email: z
@@ -23,11 +25,13 @@ const formSchema = z.object({
     .email({ message: "Please enter a valid email address." }),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters." }),
+    .min(1, { message: "Password must be at least 8 characters." }),
 });
 
 export function SignInForm() {
   const router = useRouter();
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,8 +39,19 @@ export function SignInForm() {
       password: "",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await signIn("email-password", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      })
+      router.push("/worker/profile");
+    } catch (error) {
+      console.log(error);
+      
+    }
+   
   }
 
   return (
@@ -68,7 +83,7 @@ export function SignInForm() {
             </FormItem>
           )}
         />
-
+  
         <div className="flex justify-center">
           <Button type="submit">Submit</Button>
         </div>

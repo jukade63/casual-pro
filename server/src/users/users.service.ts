@@ -22,8 +22,8 @@ export class UsersService {
     private readonly businessRepository: Repository<Business>,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService
-    
-  ) {}
+
+  ) { }
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find();
@@ -52,14 +52,14 @@ export class UsersService {
     const newWorker = this.workerRepository.create({
       user: savedUser,
     })
-    
+
     await this.workerRepository.save(newWorker)
 
     return savedUser
   }
 
   async createBusinessUser(createUserDto: CreateUserDto): Promise<User> {
-    const { email } = createUserDto;  
+    const { email } = createUserDto;
     const existingUser = await this.userRepository.findOne({ where: { email } });
 
     if (existingUser) {
@@ -77,34 +77,37 @@ export class UsersService {
   }
 
   async login(authDto: AuthDto): Promise<any> {
-    const { email, password } = authDto;
-    const user = await this.userRepository.findOne({ where: { email} });
-    if (!user) {
+   
+    const foundUser = await this.userRepository.findOne({ where: { email: authDto.email } });
+    if (!foundUser) {
       throw new NotFoundException('Credentials incorrect');
     }
-   
-    const pwMatches = await argon.verify(user.password, password)
+
+    const pwMatches = await argon.verify(foundUser.password, authDto.password)
     if (!pwMatches) {
       throw new NotFoundException('Credentials incorrect');
     }
-    const payload = { sub: user.id, username: user.email };
+    const payload = { sub: {name: foundUser.username}, username: foundUser.email };
+
+    const {password, ...user} = foundUser
 
     return {
-        access_token: await this.jwtService.signAsync(payload, {
-            expiresIn: '15m',
-            secret: this.config.get('JWT_SECRET')
-        })
+      user,
+      access_token: await this.jwtService.signAsync(payload, {
+        expiresIn: '15m',
+        secret: this.config.get('JWT_SECRET')
+      })
     }
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    await this.findOne(id); 
+    await this.findOne(id);
     await this.userRepository.update(id, updateUserDto);
-    return this.userRepository.findOne({where: {id}});
+    return this.userRepository.findOne({ where: { id } });
   }
 
   async remove(id: number): Promise<void> {
-    await this.findOne(id); 
+    await this.findOne(id);
     await this.userRepository.delete(id);
   }
 }

@@ -1,5 +1,6 @@
 import { IsString, IsNotEmpty, IsEnum, IsNumber, IsBoolean, IsDateString } from 'class-validator';
-import { JobType, Status } from '../entities/job_post.entity'; // Assuming enums are exported from job_post.entity
+import { JobType, Status } from '../entities/job_post.entity'; 
+import { Business } from 'src/businesses/entities/business.entity';
 
 export class CreateJobPostDto {
 
@@ -48,6 +49,7 @@ export class CreateJobPostDto {
   @IsNotEmpty()
   status: Status;
 
-  businessId: number
+  @IsNotEmpty()
+  business: Business
 }
 
