@@ -1,34 +1,42 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { SkillsService } from './skills.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 
 @Controller('skills')
 export class SkillsController {
-  constructor(private readonly skillsService: SkillsService) {}
+  constructor(private readonly skillsService: SkillsService) { }
 
   @Post()
   create(@Body() createSkillDto: CreateSkillDto) {
     return this.skillsService.create(createSkillDto);
   }
 
-  @Get()
-  findAll() {
-    return this.skillsService.findAll();
+  @Get(':workerId')
+  findAll(@Param('workerId', ParseIntPipe) workerId: number) {
+    return this.skillsService.findAll(workerId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.skillsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number,
+    @Param('workerId', ParseIntPipe) workerId: number
+  ) {
+    return this.skillsService.findOne(id, workerId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSkillDto: UpdateSkillDto) {
-    return this.skillsService.update(+id, updateSkillDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateSkillDto: UpdateSkillDto
+  ) {
+    return this.skillsService.update(id, updateSkillDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.skillsService.remove(+id);
+  @Delete(':id/:workerId')
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('workerId', ParseIntPipe) workerId: number
+  ) {
+    return this.skillsService.remove(id, workerId);
   }
 }

@@ -1,7 +1,7 @@
 import { Applications } from 'src/applications/entities/application.entity';
 import { Business } from 'src/businesses/entities/business.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany, OneToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 
 export enum JobType {
   Casual = 'casual',
@@ -36,17 +36,20 @@ export class JobPost extends BaseEntity {
   @Column()
   location: string;
 
-  @Column({ type: 'timestamptz' })
-  posted_date: Date;
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
 
   @Column({ type: 'timestamptz' })
-  expiry_date: Date;
+  startDate: Date; 
+
+  @Column({ type: 'timestamptz' })
+  endDate: Date; 
 
   @Column({ type: 'enum', enum: JobType })
-  job_type: JobType;
+  jobType: JobType;
 
   @Column({ type: 'decimal' })
-  payment_amount: number;
+  paymentAmount: number;
 
   @Column()
   category: string;

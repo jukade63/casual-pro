@@ -23,13 +23,13 @@ export class User extends AbstractEntity<User> {
   email: string;
 
   @Column({ type: 'enum', enum: UserType, })
-  user_type: UserType;
+  userType: UserType;
 
   @Column({ nullable: true })
-  phone_number: string;
+  phoneNumber: string;
 
   @Column({ nullable: true })
-  img_url: string;
+  imgUrl: string;
 
   @OneToOne(() => Business, business => business.user)
   business: Business;

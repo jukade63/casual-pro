@@ -12,14 +12,14 @@ export class CreateUserDto {
   readonly email: string;
 
   @IsEnum(UserType)
-  readonly user_type: UserType;
+  readonly userType: UserType;
 
   @IsOptional()
   @IsString()
-  readonly phone_number?: string;
+  readonly phoneNumber?: string;
 
   @IsOptional()
   @IsString()
-  readonly img_url?: string;
+  readonly imgUrl?: string;
 }
 

@@ -87,14 +87,14 @@ export class UsersService {
     if (!pwMatches) {
       throw new NotFoundException('Credentials incorrect');
     }
-    const payload = { sub: {name: foundUser.username}, username: foundUser.email };
+    const payload = { sub: foundUser.id, username: foundUser.username, role: foundUser.userType };
 
     const {password, ...user} = foundUser
 
     return {
       user,
       access_token: await this.jwtService.signAsync(payload, {
-        expiresIn: '15m',
+        expiresIn: '1d',
         secret: this.config.get('JWT_SECRET')
       })
     }

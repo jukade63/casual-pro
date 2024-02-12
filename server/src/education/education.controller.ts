@@ -20,13 +20,17 @@ export class EducationController {
     return this.educationService.findAll(workerId);
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.educationService.findOne(id);
+  @Get(':id/:workerId')
+  findOne(@Param('id', ParseIntPipe) id: number,
+  @Param('workerId', ParseIntPipe) workerId: number) {
+    return this.educationService.findOne(id, workerId);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateEducationDto: UpdateEducationDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateEducationDto: UpdateEducationDto
+  ) {
     return this.educationService.update(id, updateEducationDto);
   }
 

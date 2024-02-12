@@ -4,7 +4,6 @@ import { Business } from 'src/businesses/entities/business.entity';
 
 export class CreateJobPostDto {
 
-
   @IsString()
   @IsNotEmpty()
   title: string;
@@ -23,19 +22,19 @@ export class CreateJobPostDto {
 
   @IsDateString()
   @IsNotEmpty()
-  posted_date: Date;
+  startDate: Date;
 
   @IsDateString()
   @IsNotEmpty()
-  expiry_date: Date;
+  endDate: Date;
 
   @IsEnum(JobType)
   @IsNotEmpty()
-  job_type: JobType;
+  jobType: JobType;
 
   @IsNumber()
   @IsNotEmpty()
-  payment_amount: number;
+  paymentAmount: number;
 
   @IsString()
   @IsNotEmpty()

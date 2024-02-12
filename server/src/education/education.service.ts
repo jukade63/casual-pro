@@ -11,8 +11,6 @@ export class EducationService {
   constructor(
     @InjectRepository(Education)
     private readonly educationRepository: Repository<Education>,
-
-
   ) { }
   async create(createEducationDto: CreateEducationDto): Promise<Education> {
     const newEducation = this.educationRepository.create({
@@ -28,8 +26,8 @@ export class EducationService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} education`;
+  async findOne(id: number, workerId: number) {
+    return await this.educationRepository.findOne({ where: { id, worker: { id: workerId } } })
   }
 
   async update(id: number, updateEducationDto: UpdateEducationDto) {

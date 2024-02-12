@@ -15,10 +15,10 @@ export class Worker extends AbstractEntity<Worker> {
   user: User;
 
   @Column({ type: 'timestamptz', nullable: true })
-  available_from: string;
+  availableFrom: string;
 
   @Column({ type: 'timestamptz', nullable: true })
-  available_to: string;
+  availableTo: string;
 
   @OneToMany(() => Experience, (experience) => experience.worker)
   experiences: Experience[];
