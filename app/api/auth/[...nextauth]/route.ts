@@ -56,7 +56,6 @@ export const authOptions: NextAuthOptions = {
   
   },
   secret: process.env.NEXTAUTH_SECRET
-  // secret: '50df5f82ccfd7f7a0422644cc7f71583'
 
 }
 

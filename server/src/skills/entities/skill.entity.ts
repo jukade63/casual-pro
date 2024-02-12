@@ -6,17 +6,17 @@ export class Skills extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Worker, (worker) => worker.skills)
-  @JoinColumn()
-  worker: Worker;
-
   @Column()
   skill_name: string;
 
-  @Column()
+  @Column({nullable: true})
   certification: string;
 
   @Column({ nullable: true })
   cert_link: string;
+
+  @ManyToOne(() => Worker, (worker) => worker.skills)
+  @JoinColumn()
+  worker: Worker;
 }
 

@@ -34,6 +34,7 @@ export class WorkersService {
 
     return worker;
   }
+ 
   update(id: number, updateWorkerDto: UpdateWorkerDto) {
     return `This action updates a #${id} worker`;
   }

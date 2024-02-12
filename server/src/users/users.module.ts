@@ -8,7 +8,11 @@ import { Worker } from 'src/workers/entities/worker.entity';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Worker, Business]), JwtModule.register({})],
+  imports: [TypeOrmModule.forFeature([User, Worker, Business]), JwtModule.register({
+    global: true, 
+    secret: process.env.JWT_SECRET,
+    signOptions: { expiresIn: '1d' },
+  })],
   controllers: [UsersController],
   providers: [UsersService],
 })

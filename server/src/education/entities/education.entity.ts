@@ -1,12 +1,11 @@
 // src/entities/education.entity.ts
+import { AbstractEntity } from 'src/database/Abstract.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne } from 'typeorm';
 
 @Entity()
-export class Education extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Education extends AbstractEntity<Education> {
+ 
   @Column()
   institution: string;
 

@@ -10,10 +10,9 @@ import { ApplicationsService } from 'src/applications/applications.service';
 import { WorkersService } from 'src/workers/workers.service';
 import { ExperienceService } from 'src/experience/experience.service';
 import { Experience } from 'src/experience/entities/experience.entity';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Jobs, Ratings, Applications, Worker, Experience]), JwtModule.register({})],
+  imports: [TypeOrmModule.forFeature([Jobs, Ratings, Applications, Worker, Experience])],
   controllers: [JobsController],
   providers: [JobsService, ApplicationsService, WorkersService, ExperienceService],
 })

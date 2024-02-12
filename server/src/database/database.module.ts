@@ -8,7 +8,7 @@ import {TypeOrmModule} from '@nestjs/typeorm'
             useFactory: (configService: ConfigService) => ({
                 type: 'postgres',
                 host: configService.getOrThrow('POSTGRES_HOST'),
-                port: configService.getOrThrow('POSTGRES_PORT'),
+                port: +configService.getOrThrow('POSTGRES_PORT'),
                 username: configService.getOrThrow('POSTGRES_USER'),
                 password: configService.getOrThrow('POSTGRES_PASSWORD'),
                 database: configService.getOrThrow('POSTGRES_DB'),

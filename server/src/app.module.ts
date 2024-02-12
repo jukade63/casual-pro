@@ -11,9 +11,22 @@ import { JobPostsModule } from './job_posts/job_posts.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { JobsModule } from './jobs/jobs.module';
 import { RatingsModule } from './ratings/ratings.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, UsersModule, WorkersModule, BusinessesModule, EducationModule, ExperienceModule, SkillsModule, JobPostsModule, ApplicationsModule, JobsModule, RatingsModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }),  
+    DatabaseModule, 
+    UsersModule, 
+    WorkersModule, 
+    BusinessesModule, 
+    EducationModule, 
+    ExperienceModule, 
+    SkillsModule, 
+    JobPostsModule, 
+    ApplicationsModule, 
+    JobsModule, 
+    RatingsModule],
   controllers: [],
   providers: [],
 })
