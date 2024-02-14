@@ -8,7 +8,7 @@ export class Business extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, (user) => user.business)
+  @OneToOne(() => User, (user) => user.business, {onDelete:'SET NULL'})
   @JoinColumn()
   user: User;
 

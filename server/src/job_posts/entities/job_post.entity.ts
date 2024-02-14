@@ -20,7 +20,7 @@ export class JobPost extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Business, (business) => business.jobPosts)
+  @ManyToOne(() => Business, (business) => business.jobPosts, {onDelete: 'CASCADE'})
   @JoinColumn()
   business: Business;
 
@@ -30,11 +30,11 @@ export class JobPost extends BaseEntity {
   @Column('text')
   description: string;
 
-  @Column('text')
-  requirements: string;
+  @Column('varchar', {array: true})
+  requirements: string[];
 
-  @Column()
-  location: string;
+  @Column('varchar', {array: true})
+  location: string[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

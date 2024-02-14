@@ -14,6 +14,7 @@ import agriculture from "../../public/agriculture.jpg";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import JobList from "@/components/worker/JobList";
 
 const jobCategory = [
   {
@@ -130,6 +131,9 @@ function WorkerPage() {
         <Link href="worker/sign-up" className={`${buttonVariants()} mt-10`}>
           Sign up
         </Link>
+        <div className="mt-10"> 
+          <JobList />
+        </div>
         <h1 className="font-bold text-2xl mt-20 mb-8">
           Navigate Your Work Disciplines
         </h1>

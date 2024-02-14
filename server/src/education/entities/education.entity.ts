@@ -1,4 +1,3 @@
-// src/entities/education.entity.ts
 import { AbstractEntity } from 'src/database/Abstract.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne } from 'typeorm';
@@ -18,7 +17,7 @@ export class Education extends AbstractEntity<Education> {
   @Column({ type: 'date' })
   grad_date: Date;
 
-  @ManyToOne(() => Worker, (worker) => worker.education)
+  @ManyToOne(() => Worker, (worker) => worker.education, {onDelete: 'CASCADE'})
   worker: Worker;
 }
 

@@ -32,7 +32,7 @@ export class Worker extends AbstractEntity<Worker> {
   @OneToMany(() => Applications, (application) => application.worker)
   applications: Applications[];
 
-  @ManyToMany(() => Jobs)
+  @ManyToMany(() => Jobs, {onDelete: 'SET NULL'})
   jobs: Jobs[];
 }
 

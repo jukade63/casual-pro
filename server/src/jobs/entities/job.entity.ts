@@ -12,11 +12,11 @@ export class Jobs extends BaseEntity {
   @Column()
   completed: boolean;
 
-  @OneToOne(() => JobPost, (jobPost) => jobPost.job)
+  @OneToOne(() => JobPost, (jobPost) => jobPost.job, {onDelete: 'SET NULL'})
   @JoinColumn()
   jobPost: JobPost;
 
-  @ManyToMany(() => Worker, (worker) => worker.jobs)
+  @ManyToMany(() => Worker, (worker) => worker.jobs, {onDelete: 'SET NULL'})
   @JoinTable()
   workers: Worker[]
 

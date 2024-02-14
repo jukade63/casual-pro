@@ -7,7 +7,7 @@ export class Ratings extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Jobs, (job) => job.ratings)
+  @ManyToOne(() => Jobs, (job) => job.ratings, {onDelete: 'SET NULL'})
   @JoinColumn()
   job: Jobs;
 

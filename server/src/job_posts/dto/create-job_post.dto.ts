@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsEnum, IsNumber, IsBoolean, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum, IsNumber, IsBoolean, IsDateString, IsArray } from 'class-validator';
 import { JobType, Status } from '../entities/job_post.entity'; 
 import { Business } from 'src/businesses/entities/business.entity';
 
@@ -12,13 +12,13 @@ export class CreateJobPostDto {
   @IsNotEmpty()
   description: string;
 
-  @IsString()
+  @IsArray()
   @IsNotEmpty()
-  requirements: string;
+  requirements: string[];
 
-  @IsString()
+  @IsArray()
   @IsNotEmpty()
-  location: string;
+  location: string[];
 
   @IsDateString()
   @IsNotEmpty()

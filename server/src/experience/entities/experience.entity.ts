@@ -21,7 +21,7 @@ export class Experience extends BaseEntity {
   @Column()
   endDate: Date;
 
-  @ManyToOne(() => Worker, (worker) => worker.experiences)
+  @ManyToOne(() => Worker, (worker) => worker.experiences, {onDelete: 'CASCADE'})
   worker: Worker;
 }
 

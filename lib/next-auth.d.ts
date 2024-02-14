@@ -7,11 +7,11 @@ declare module "next-auth" {
             id: number;
             username: string;
             email: string;
-            user_type: string;
-            phone_number: string;
-            img_url: string;
+            userType: string;
+            phoneNumber: string;
+            imgUrl: string;
         };
-        access_token: string;
+        accessToken: string;
     }
 }
 declare module "next-auth/jwt" {
@@ -20,10 +20,10 @@ declare module "next-auth/jwt" {
             id: number;
             username: string;
             email: string;
-            user_type: string;
-            phone_number: string;
-            img_url: string;
+            userType: string;
+            phoneNumber: string;
+            imgUrl: string;
         };
-        access_token: string;
+        accessToken: string;
     }
 }

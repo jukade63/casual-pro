@@ -15,7 +15,7 @@ export class Skills extends BaseEntity {
   @Column({ nullable: true })
   cert_link: string;
 
-  @ManyToOne(() => Worker, (worker) => worker.skills)
+  @ManyToOne(() => Worker, (worker) => worker.skills, {onDelete: 'CASCADE'})
   @JoinColumn()
   worker: Worker;
 }

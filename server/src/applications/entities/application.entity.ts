@@ -1,6 +1,6 @@
 import { JobPost } from 'src/job_posts/entities/job_post.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 
 
 export enum ApplicationStatus {
@@ -14,17 +14,17 @@ export class Applications extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  created_date: Date;
+  @CreateDateColumn({ type: 'timestamptz' })
+  appliedAt: Date;
 
   @Column({ type: 'enum', enum: ApplicationStatus })
   status: ApplicationStatus;
 
-  @ManyToOne(() => Worker, (worker) => worker.applications)
+  @ManyToOne(() => Worker, (worker) => worker.applications, {onDelete: 'CASCADE'})
   @JoinColumn()
   worker: Worker;
 
-  @ManyToOne(() => JobPost, (jobPost) => jobPost.applications)
+  @ManyToOne(() => JobPost, (jobPost) => jobPost.applications, {onDelete: 'CASCADE'})
   @JoinColumn()
   jobPost: JobPost;
 

@@ -93,7 +93,7 @@ export class UsersService {
 
     return {
       user,
-      access_token: await this.jwtService.signAsync(payload, {
+      accessToken: await this.jwtService.signAsync(payload, {
         expiresIn: '1d',
         secret: this.config.get('JWT_SECRET')
       })
