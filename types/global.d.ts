@@ -1,4 +1,4 @@
-export {}
+export { }
 
 declare global {
   interface User {
@@ -9,14 +9,14 @@ declare global {
     phoneNumber: string;
     imgUrl: string;
   }
-  
+
   interface Business {
     id: number;
     industry: string | null;
     description: string | null;
     user: User;
   }
-  
+
   interface JobPost {
     id: number;
     title: string;
@@ -33,5 +33,12 @@ declare global {
     status: string;
     business: Business;
   }
+
+  interface Education {
+    institution: string;
+    degree: string;
+    major: string;
+    gradDate: string;
+
+  }
 }
-  

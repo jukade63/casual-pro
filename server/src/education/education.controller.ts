@@ -12,15 +12,17 @@ export class EducationController {
 
   @Post()
   create(@Body() createEducationDto: CreateEducationDto) {
+    console.log(createEducationDto);
+    
     return this.educationService.create(createEducationDto);
   }
 
-  @Get(':workerId')
-  findAll(@Param('workerId', ParseIntPipe) workerId: number) {
-    return this.educationService.findAll(workerId);
+  @Get(':userId')
+  findAll(@Param('userId', ParseIntPipe) userId: number) {
+    return this.educationService.findAll(userId);
   }
 
-  @Get(':id/:workerId')
+  @Get(':id/:userId')
   findOne(@Param('id', ParseIntPipe) id: number,
   @Param('workerId', ParseIntPipe) workerId: number) {
     return this.educationService.findOne(id, workerId);
@@ -34,10 +36,10 @@ export class EducationController {
     return this.educationService.update(id, updateEducationDto);
   }
 
-  @Delete(':id/:workerId')
+  @Delete(':id/:userId')
   remove(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('workerId', ParseIntPipe) workerId: number) {
-    return this.educationService.remove(id, workerId);
+    @Param('id') id: string,
+    @Param('userId') userId: string) {
+    return this.educationService.remove(id, userId);
   }
 }

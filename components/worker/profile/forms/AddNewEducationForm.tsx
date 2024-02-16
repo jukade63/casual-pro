@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useTransition } from "react";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -15,32 +15,64 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { BACKEND_URL } from "@/lib/constants";
+import { useSession } from "next-auth/react";
+import ButtonLoading from "@/components/ButtonLoading";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-  institute: z.string().min(1),
+  institution: z.string().min(1),
   degree: z.string().min(1),
-  year: z.string().min(1),
-  gpax: z.string().min(1),
+  major: z.string().min(1),
+  gradDate: z.string().min(1),
 });
 
 interface AddNewEducationFormProps {
-   setIsOpen: Dispatch<SetStateAction<boolean>>
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export function AddNewEducationForm({ setIsOpen }: AddNewEducationFormProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
+  const { data: session } = useSession();
+  const [submitError, setSubmitError] = useState("");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      institute: "",
+      institution: "",
       degree: "",
-      year: "",
-      gpax: "",
+      gradDate: "",
+      major: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    setIsOpen(false)
+  const isLoading = form.formState.isSubmitting;
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/education`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+        body: JSON.stringify({ ...values, userId: session?.user?.id }),
+      });
+      if (res.ok) {
+        setIsOpen(false);
+        startTransition(() => {
+          // Refresh the current route and fetch new data
+          // from the server without losing
+          // client-side browser or React state.
+          router.refresh();
+        });
+      } else {
+        setSubmitError("An unexpected error occurred.");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -50,15 +82,12 @@ export function AddNewEducationForm({ setIsOpen }: AddNewEducationFormProps) {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
-              name="institute"
+              name="institution"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Institute</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="name..."
-                      {...field}
-                    />
+                    <Input placeholder="name..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -79,10 +108,10 @@ export function AddNewEducationForm({ setIsOpen }: AddNewEducationFormProps) {
             />
             <FormField
               control={form.control}
-              name="year"
+              name="major"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Graduate year</FormLabel>
+                  <FormLabel>Major</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -92,25 +121,35 @@ export function AddNewEducationForm({ setIsOpen }: AddNewEducationFormProps) {
             />
             <FormField
               control={form.control}
-              name="gpax"
+              name="gradDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>GPAX</FormLabel>
+                  <FormLabel>Graduate year</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} type="date" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
+            {submitError && <p className="text-red-500">{submitError}</p>}
             <div className="pt-6 space-x-2 flex items-center justify-end w-full">
-              <Button variant="destructive" className="border-1" onClick={() => setIsOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">
-                Save
-              </Button>
+              {isLoading ? (
+                <ButtonLoading />
+              ) : (
+                <>
+                  <Button
+                    variant="destructive"
+                    className="border-1"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isLoading}>
+                    Save
+                  </Button>
+                </>
+              )}
             </div>
           </form>
         </Form>

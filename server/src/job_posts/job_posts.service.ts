@@ -66,8 +66,17 @@ export class JobPostsService {
     return foundJobPosts;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} jobPost`;
+  async findOne(id: number) {
+    const jobPost = await this.jobPostRepository.findOne({ where: { id }, relations: ['business.user'] });
+    if (!jobPost) {
+      throw new NotFoundException(`JobPost with id ${id} not found`);
+    } else {
+      if (jobPost.business && jobPost.business.user) {
+        delete jobPost.business.user.password;
+      }
+      return jobPost
+      
+    }
   }
 
   update(id: number, updateJobPostDto: UpdateJobPostDto) {

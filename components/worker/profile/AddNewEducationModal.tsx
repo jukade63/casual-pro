@@ -5,16 +5,17 @@ import { AddNewEducationForm } from "./forms/AddNewEducationForm";
 import { useState } from "react";
 
 export const AddNewEducationModal = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const onClose = () => setIsOpen(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const onClose = () => setIsOpen(false);
   return (
     <BaseModal
+      trigger="Add"
       title="New Education"
       isOpen={isOpen}
       onClose={onClose}
       setIsOpen={setIsOpen}
     >
-      <AddNewEducationForm setIsOpen={setIsOpen}/>
+      <AddNewEducationForm setIsOpen={setIsOpen} />
     </BaseModal>
   );
 };

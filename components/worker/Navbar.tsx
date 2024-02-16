@@ -1,6 +1,8 @@
+"use client"
 import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
+import { signOut } from "next-auth/react";
 
 function Navbar() {
   return (
@@ -11,7 +13,7 @@ function Navbar() {
       >
         Find jobs
       </Link>
-      <Button className="ml-4" variant="destructive">Log out</Button>
+      <Button className="ml-4" variant="destructive" onClick={() => signOut({callbackUrl: '/'})}>Log out</Button>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -37,8 +38,10 @@ const formSchema = z
   });
 
 export function SignUpForm() {
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,7 +53,6 @@ export function SignUpForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     try {
       const response = await fetch(BACKEND_URL + "/users/worker", {
         method: "POST",
@@ -59,16 +61,17 @@ export function SignUpForm() {
         },
         body: JSON.stringify({
           ...values,
-          user_type: "worker",
+          userType: "worker",
         }),
       });
       if (response.ok) {
-        setSuccess(true);
+        router.push("/worker/sign-in");
       }
     } catch (error) {
-      setError(true);
+      setError("Sign-up failed. try again");
     } finally {
       form.reset();
+      setLoading(false);
     }
   }
 
@@ -130,14 +133,20 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        {success && <div className="text-green-500"> == Success ==</div>}
-        {error && <div className="text-red-500"> == Error ==</div>}
+        {error && (
+          <p className="text-red-500 text-xs bg-red-200 p-2 rounded-sm mb-2">
+            {error}
+          </p>
+        )}
+
         <div className="flex justify-center">
-          <Button type="submit">Sign Up</Button>
+
+          <Button type="submit" disabled={loading}>Sign Up</Button>
+
         </div>
 
         <div className="text-center">
-          <p>
+          <p className="text-sm">
             Already have an account?{" "}
             <Link
               href="/worker/sign-in"

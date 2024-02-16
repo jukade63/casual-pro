@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query, ParseIntPipe, } from '@nestjs/common';
 import { JobPostsService } from './job_posts.service';
 import { CreateJobPostDto } from './dto/create-job_post.dto';
 import { UpdateJobPostDto } from './dto/update-job_post.dto';
@@ -23,8 +23,8 @@ export class JobPostsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jobPostsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.jobPostsService.findOne(id);
   }
 
   @Patch(':id')

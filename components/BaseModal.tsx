@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction } from "react";
 
 interface ModalProps {
+  trigger: string
   title: string;
   description?: string;
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface ModalProps {
 }
 
 export const BaseModal: React.FC<ModalProps> = ({
+  trigger,
   title,
   isOpen,
   onClose,
@@ -37,7 +39,7 @@ export const BaseModal: React.FC<ModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onChange}>
       <DialogTrigger asChild>
-        <Button className='' onClick={() => setIsOpen(true)}>{title}</Button>
+        <Button className='' onClick={() => setIsOpen(true)}>{trigger}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

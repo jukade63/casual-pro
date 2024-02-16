@@ -4,6 +4,8 @@ import { UpdateEducationDto } from './dto/update-education.dto';
 import { Repository } from 'typeorm';
 import { Education } from './entities/education.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { WorkersService } from 'src/workers/workers.service';
+import { Worker } from 'src/workers/entities/worker.entity';
 
 @Injectable()
 export class EducationService {
@@ -11,18 +13,33 @@ export class EducationService {
   constructor(
     @InjectRepository(Education)
     private readonly educationRepository: Repository<Education>,
+    @InjectRepository(Worker)
+    private readonly workerRepository: Repository<Worker>,
   ) { }
   async create(createEducationDto: CreateEducationDto): Promise<Education> {
+    console.log(createEducationDto.userId);
+    
+    const worker = await this.workerRepository.findOne({ where: { user: {id: createEducationDto.userId} } });
+    console.log(worker);
+    
+    if (!worker) {
+      throw new NotFoundException(`No worker found for ID ${createEducationDto.userId}`);
+      
+    }
     const newEducation = this.educationRepository.create({
       ...createEducationDto,
-      worker: { id: createEducationDto.workerId }
+      worker
     });
     return await this.educationRepository.save(newEducation);
   }
 
-  async findAll(workerId: number) {
+  async findAll(userId: number) {
+    const worker = await this.workerRepository.findOne({ where: { user: {id: userId} } });
+    if (!worker) {
+      throw new NotFoundException(`No worker found for ID ${userId}`);
+    }
     return await this.educationRepository.find({
-      where: { worker: { id: workerId } },
+      where: { worker: { id: worker.id } },
     });
   }
 
@@ -31,12 +48,18 @@ export class EducationService {
   }
 
   async update(id: number, updateEducationDto: UpdateEducationDto) {
-    const { workerId, ...updateData } = updateEducationDto;
+    const { userId, ...updateData } = updateEducationDto;
 
-    const education = await this.educationRepository.findOne({ where: { id, worker: { id: workerId } } });
+    const worker = await this.workerRepository.findOne({ where: { user: {id: updateEducationDto.userId} } });
+    if (!worker) {
+      throw new NotFoundException(`No worker found for ID ${updateEducationDto.userId}`);
+      
+    }
+
+    const education = await this.educationRepository.findOne({ where: { id, worker: { id: worker.id } } });
 
     if (!education) {
-      throw new NotFoundException(`No education found for ID ${id} and/or worker with ID ${workerId}`);
+      throw new NotFoundException(`No education found for ID ${id} and/or worker with ID ${worker.id}`);
     }
 
     const updatedEducation = { ...education, ...updateData };
@@ -44,11 +67,14 @@ export class EducationService {
 
   }
 
-  async remove(id: number, workerId: number) {
-    const education = await this.educationRepository.findOne({ where: { id, worker: { id: workerId } } });
+  async remove(id: string, userId: string) {
+    const parsedId = parseInt(id, 10)
+    const parsedUserId = parseInt(userId, 10)
+    const worker = await this.workerRepository.findOne({ where: { user: {id: parsedUserId} } });
+    const education = await this.educationRepository.findOne({ where: { id: parsedId, worker: { id: worker.id } } });
 
     if (!education) {
-      throw new NotFoundException(`No education found for ID ${id} and/or worker with ID ${workerId}`);
+      throw new NotFoundException(`No education found for ID ${id} and/or worker with ID ${worker.id}`);
     }
 
     await this.educationRepository.remove(education);

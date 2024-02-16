@@ -15,7 +15,7 @@ export class Education extends AbstractEntity<Education> {
   major: string;
 
   @Column({ type: 'date' })
-  grad_date: Date;
+  gradDate: Date;
 
   @ManyToOne(() => Worker, (worker) => worker.education, {onDelete: 'CASCADE'})
   worker: Worker;

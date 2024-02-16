@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import ButtonLoading from "../ButtonLoading";
 
 const formSchema = z.object({
   email: z
@@ -30,8 +31,8 @@ const formSchema = z.object({
 
 export function SignInForm() {
   const router = useRouter();
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,18 +41,23 @@ export function SignInForm() {
     },
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     try {
-      await signIn("email-password", {
+      const result = await signIn("email-password", {
         email: values.email,
         password: values.password,
         redirect: false,
-      })
-      router.push("/worker/profile");
+      });
+      if (result?.error === "CredentialsSignin") {
+        setError("Invalid email or password. Please try again.");
+      } else {
+        setLoading(false);
+        router.push("/worker/dashboard");
+      }
     } catch (error) {
-      console.log(error);
-      
+      setError("An unexpected error occurred. Please try again later.");
+      console.error("Sign-in error:", error);
     }
-   
   }
 
   return (
@@ -83,12 +89,23 @@ export function SignInForm() {
             </FormItem>
           )}
         />
-  
+
         <div className="flex justify-center">
-          <Button type="submit">Submit</Button>
+          {loading ? (
+            <ButtonLoading />
+          ) : (
+            <Button type="submit" disabled={loading}>
+              Submit
+            </Button>
+          )}
         </div>
         <div className="text-center">
-          <p>
+          {error && (
+            <p className="text-red-500 text-xs bg-red-200 p-2 rounded-sm mb-2">
+              {error}
+            </p>
+          )}
+          <p className="text-sm">
             Haven't signed up yet?{" "}
             <span
               onClick={() => router.push("/worker/sign-up")}
@@ -102,3 +119,4 @@ export function SignInForm() {
     </Form>
   );
 }
+
