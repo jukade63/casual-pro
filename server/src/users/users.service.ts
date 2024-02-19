@@ -10,6 +10,7 @@ import { Business } from 'src/businesses/entities/business.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthDto } from './dto/auth.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +22,8 @@ export class UsersService {
     @InjectRepository(Business)
     private readonly businessRepository: Repository<Business>,
     private readonly jwtService: JwtService,
-    private readonly config: ConfigService
+    private readonly config: ConfigService,
+    private readonly cloudinaryService: CloudinaryService
 
   ) { }
 
@@ -77,7 +79,7 @@ export class UsersService {
   }
 
   async login(authDto: AuthDto): Promise<any> {
-   
+
     const foundUser = await this.userRepository.findOne({ where: { email: authDto.email } });
     if (!foundUser) {
       throw new NotFoundException('Credentials incorrect');
@@ -89,7 +91,7 @@ export class UsersService {
     }
     const payload = { sub: foundUser.id, username: foundUser.username, role: foundUser.userType };
 
-    const {password, ...user} = foundUser
+    const { password, ...user } = foundUser
 
     return {
       user,
@@ -100,10 +102,30 @@ export class UsersService {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    await this.findOne(id);
-    await this.userRepository.update(id, updateUserDto);
-    return this.userRepository.findOne({ where: { id } });
+  async update(updateUserDto: UpdateUserDto): Promise<User> {
+
+    const user = await this.findOne(updateUserDto.id);
+
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (updateUserDto.imgUrl && updateUserDto.imgUrl !== user.imgUrl) {
+      try {
+        await this.cloudinaryService.deleteImage(user.publicId);
+      } catch (error) {
+        console.error('Failed to delete old image:', error.message);
+      }
+      try {
+        const data = await this.cloudinaryService.uploadImage(updateUserDto.imgUrl);
+
+        updateUserDto.imgUrl = data.secure_url
+        updateUserDto.publicId = data.public_id
+      } catch (error) {
+        throw new Error('Failed to upload image')
+      }
+    }
+    return await this.userRepository.save(updateUserDto);
   }
 
   async remove(id: number): Promise<void> {

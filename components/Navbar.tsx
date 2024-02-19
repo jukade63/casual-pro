@@ -9,6 +9,8 @@ import Image from "next/image";
 function Navbar() {
   const pathname = usePathname();
 
+  const currentPathClass = "text-blue-500 hover:no-underline hover:cursor-default"
+
   return (
     <div className="bg-white shadow-md">
       <div className="container mx-auto flex h-16 items-center p-4">
@@ -18,13 +20,14 @@ function Navbar() {
             className="object-cover rounded-full"
             alt="app-logo"
             width={100}
+            height={80}
           />
         </Link>
         <Link
           href="/worker"
           className={cn(
-            "ml-4 text-gray-800 hover:text-blue-500",
-            pathname === "/worker" ? "text-blue-500" : ""
+            "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
+            pathname === "/worker" ? currentPathClass : ""
           )}
         >
           Find jobs
@@ -32,16 +35,19 @@ function Navbar() {
         <Link
           href="/business"
           className={cn(
-            "ml-4 text-gray-800 hover:text-blue-500",
-            pathname === "/business" ? "text-blue-500" : ""
+            "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
+            pathname === "/business" ? currentPathClass : ""
           )}
         >
           Find workers
         </Link>
         <div className="ml-auto">
           <Link
-            href="/how-it-works"
-            className="ml-4 text-gray-800 hover:text-blue-500"
+            href="/business/#how-it-works"
+            className={cn(
+              "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
+              pathname === "/how-it-works" ? currentPathClass : ""
+            )}
           >
             How it works
           </Link>

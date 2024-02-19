@@ -1,16 +1,15 @@
-'use client'
+"use client"
 import React from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import placeholder from "@/public/worker-placeholder.png"
+import { Button } from "@/components/ui/button";
+import { useModal } from "@/hooks/useModalStore";
 
 
 export default function General() {
-  const {data:session} = useSession()
-
-  console.log({session});
-  
-
+  const {onOpen} = useModal()
+  const {data:session} = useSession()  
   const imgSrc = session?.user?.imgUrl || placeholder
 
   return (
@@ -21,6 +20,9 @@ export default function General() {
         <div className="text-sm text-gray-600">Email : {session?.user?.email}</div>
         <div className="text-sm text-gray-600">Phone Number : {session?.user?.phoneNumber}</div>
       </div>
+      {/* <Button onClick={()=>onOpen('editProfile', {session})}>Edit</Button>
+      <button onClick={()=>onOpen('editProfile')}>modal one</button> */}
+      <button onClick={()=>onOpen('modalTwo', {session})}>modal two</button>
     </div>
   );
 }

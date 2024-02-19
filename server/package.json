@@ -23,7 +23,6 @@
     "migration:create": "npm run typeorm -- migration:create ./migrations/%npm_config_name%",
     "migration:run": "npm run typeorm migration:run -- -d ./data-source.ts",
     "migration:revert": "npm run typeorm -- -d ./data-source.ts migration:revert"
-
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -36,6 +35,7 @@
     "argon2": "^0.31.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "cloudinary": "^2.0.1",
     "dotenv": "^16.4.4",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",

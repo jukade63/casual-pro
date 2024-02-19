@@ -35,10 +35,23 @@ declare global {
   }
 
   interface Education {
+    id?: number;
     institution: string;
     degree: string;
     major: string;
     gradDate: string;
 
   }
+
+  interface Session {
+    user: {
+        id: number;
+        username: string;
+        email: string;
+        userType: string;
+        phoneNumber: string;
+        imgUrl: string;
+    };
+    accessToken: string;
+}
 }

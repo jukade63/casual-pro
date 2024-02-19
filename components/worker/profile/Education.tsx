@@ -1,4 +1,3 @@
-import { AddNewEducationModal } from "./AddNewEducationModal";
 import { getAllEducation, getSession } from "@/lib/apiCalls/fetchers";
 import { revalidateTag } from "next/cache";
 import EducationRow from "../EducationRow";
@@ -48,8 +47,8 @@ const Education = async () => {
       ) : (
         <p>No education data available.</p>
       )}
+      <button>Add Education</button>
       <div className="mt-2 w-full text-center">
-        <AddNewEducationModal />
       </div>
     </div>
   );

@@ -1,7 +1,9 @@
-import { IsString, IsEmail, IsEnum, IsOptional } from 'class-validator';
+import { IsString, IsEmail, IsEnum, IsOptional, isInt, IsInt } from 'class-validator';
 import { UserType } from '../entities/user.entity';
 
 export class CreateUserDto {
+  @IsInt()
+  readonly id: number;
   @IsString()
   readonly username: string;
 
@@ -20,6 +22,10 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString()
-  readonly imgUrl?: string;
+  imgUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  publicId?: string;
 }
 

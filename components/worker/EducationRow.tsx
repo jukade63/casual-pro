@@ -1,5 +1,4 @@
 "use client";
-import { EducationType } from "@/lib/apiCalls/fetchers";
 import { BACKEND_URL } from "@/lib/constants";
 import { X} from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -8,7 +7,7 @@ import ButtonLoading from "../ButtonLoading";
 
 type Props = {
   index: number;
-  education: EducationType;
+  education: Education;
   accessToken: string | undefined;
   userId: number | undefined;
 };

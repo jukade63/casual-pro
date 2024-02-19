@@ -13,6 +13,7 @@ import { JobsModule } from './jobs/jobs.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),  
@@ -26,7 +27,7 @@ import { JwtModule } from '@nestjs/jwt';
     JobPostsModule, 
     ApplicationsModule, 
     JobsModule, 
-    RatingsModule],
+    RatingsModule, CloudinaryModule],
   controllers: [],
   providers: [],
 })

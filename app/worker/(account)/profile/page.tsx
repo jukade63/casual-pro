@@ -1,4 +1,3 @@
-import { EditProfileModal } from "@/components/worker/EditProfileModal";
 import Education from "@/components/worker/profile/Education";
 import Experience from "@/components/worker/profile/Experience";
 import General from "@/components/worker/profile/General";
@@ -14,8 +13,9 @@ const Profile = () => {
         <General />
       </div>
       <div className="mt-2">
-        <ProfileTabs />
+        {/* <ProfileTabs /> */}
       </div>
+      
     </>
   );
 };

@@ -19,14 +19,6 @@ export const getJob = async (id: number) => {
     return data
 }
 
-export type EducationType = {
-    id: number
-    institution: string
-    degree: string
-    major: string
-    gradDate: string
-    
-}
 export const getAllEducation = async (userId: number) => {
     const res = await fetch(`${BACKEND_URL}/education/${userId}`, {next: {tags: ['education']}})
     return await res.json()

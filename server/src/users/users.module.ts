@@ -6,9 +6,10 @@ import { UsersService } from './users.service';
 import { Business } from 'src/businesses/entities/business.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Worker, Business]), JwtModule.register({
+  imports: [CloudinaryModule, TypeOrmModule.forFeature([User, Worker, Business]), JwtModule.register({
     global: true, 
     secret: process.env.JWT_SECRET,
     signOptions: { expiresIn: '1d' },

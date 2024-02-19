@@ -31,6 +31,9 @@ export class User extends AbstractEntity<User> {
   @Column({ nullable: true })
   imgUrl: string;
 
+  @Column({ nullable: true })
+  publicId: string;
+
   @OneToOne(() => Business, business => business.user)
   business: Business;
 

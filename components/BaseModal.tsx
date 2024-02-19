@@ -1,24 +1,21 @@
 "use client";
-
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 
 interface ModalProps {
-  trigger: string
+  trigger: string;
   title: string;
   description?: string;
   isOpen: boolean;
   onClose: () => void;
-  setIsOpen: Dispatch<SetStateAction<boolean>>
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
   children?: React.ReactNode;
 }
 
@@ -36,10 +33,13 @@ export const BaseModal: React.FC<ModalProps> = ({
     }
   };
 
+
   return (
     <Dialog open={isOpen} onOpenChange={onChange}>
       <DialogTrigger asChild>
-        <Button className='' onClick={() => setIsOpen(true)}>{trigger}</Button>
+        <Button className="" onClick={() => setIsOpen(true)}>
+          {trigger}
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

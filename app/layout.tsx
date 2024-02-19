@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
+import ModalProvider from "../providers/ModalProvider";
 
-const poppins = Poppins({subsets: ["latin"], weight: ["400", "500", "600", "700"]});
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "Casual Pro",
@@ -19,7 +23,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.className}`}>
         <AuthProvider>
-        {children}
+          <ModalProvider />
+          {children}
         </AuthProvider>
       </body>
     </html>
