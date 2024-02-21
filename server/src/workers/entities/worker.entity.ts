@@ -9,29 +9,29 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColum
 
 @Entity()
 export class Worker extends AbstractEntity<Worker> {
-
-  @OneToOne(() => User)
-  @JoinColumn()
-  user: User;
-
+  
   @Column({ type: 'timestamptz', nullable: true })
   availableFrom: string;
 
   @Column({ type: 'timestamptz', nullable: true })
   availableTo: string;
+  
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
 
   @OneToMany(() => Experience, (experience) => experience.worker)
   experiences: Experience[];
-
+  
   @OneToMany(() => Skills, (skills) => skills.worker)
   skills: Skills[];
-
+  
   @OneToMany(() => Education, (education) => education.worker)
   education: Education[];
-
+  
   @OneToMany(() => Applications, (application) => application.worker)
   applications: Applications[];
-
+  
   @ManyToMany(() => Jobs, {onDelete: 'SET NULL'})
   jobs: Jobs[];
 }

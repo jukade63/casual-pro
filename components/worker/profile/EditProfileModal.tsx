@@ -1,20 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { useModal } from "@/hooks/useModalStore";
-
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -26,45 +21,48 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { BACKEND_URL } from "@/lib/constants";
-import { useSession } from "next-auth/react";
+import { useModal } from "@/hooks/useModalStore";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import ButtonLoading from "@/components/ButtonLoading";
+import { useSession } from "next-auth/react";
 
-export const EditProfileModal = () => {
+export default function EditProfileModal() {
+  const { update } = useSession();
   const router = useRouter();
-  const { isOpen, onClose, type } = useModal();
-  
-  const formSchema = z.object({
-    username: z.string().min(1),
-    email: z.string().min(1),
-    phoneNumber: z.string().min(1),
-    imgUrl: z.string().min(1),
-  });
+  const [submitError, setSubmitError] = useState("");
+  const { isOpen, onClose, type, data } = useModal();
+  const session = data?.session
+
   const isModalOpen = isOpen && type === "editProfile";
 
-  const [isPending, startTransition] = useTransition();
+  const formSchema = z.object({
+    username: z.string().min(1),
+    email: z
+      .string()
+      .min(1)
+      .email({ message: "Please enter a valid email address." }),
+    phoneNumber: z.string().min(1),
+    imgUrl: z.string()
+  });
 
-  const { data: session } = useSession();
-  const [submitError, setSubmitError] = useState("");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      email: "",
-      phoneNumber: "",
-      imgUrl: "",
+      username: session?.user.username || "",
+      email: session?.user.email || "",
+      phoneNumber: session?.user.phoneNumber || "",
+      imgUrl: session?.user.imgUrl || "",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
 
-  const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      form.setValue("imgUrl", URL.createObjectURL(file));
-    }
-  };
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    
     try {
       const res = await fetch(`${BACKEND_URL}/users`, {
         method: "PATCH",
@@ -72,13 +70,23 @@ export const EditProfileModal = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.accessToken}`,
         },
-        body: JSON.stringify({ ...values, userId: session?.user?.id }),
+        body: JSON.stringify({
+          ...values,
+          id: session?.user.id,
+          publicId: session?.user.publicId,
+        }),
       });
+      const data = await res.json();
+      console.log(data);
+
       if (res.ok) {
-        onClose();
-        startTransition(() => {
-          router.refresh();
+        // update session
+        await update({
+          ...session,
+          user: data,
         });
+        router.refresh();
+        onClose();
       } else {
         setSubmitError("An unexpected error occurred.");
       }
@@ -87,105 +95,108 @@ export const EditProfileModal = () => {
     }
   };
   const handleClose = () => {
-    form.reset();
     onClose();
   };
+
+  const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.readyState === 2) {
+          form.setValue("imgUrl", reader.result as string);
+          console.log(reader.result);
+          
+        }
+      }
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-2 pb-4">
-          <div className="space-y-2">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)}>
-                <FormField
-                  control={form.control}
-                  name="imgUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="file"
-                          onChange={onImageChange}
-                        />
-                        {form.getValues("imgUrl") && (
-                          <img
-                            src={form.getValues("imgUrl")}
-                            alt="Selected image"
-                          />
-                        )}
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input placeholder="name..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email </FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phoneNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {submitError && <p className="text-red-500">{submitError}</p>}
-                <div className="pt-6 space-x-2 flex items-center justify-end w-full">
-                  {isLoading ? (
-                    <ButtonLoading />
-                  ) : (
-                    <>
-                      <Button
-                        variant="destructive"
-                        className="border-1"
-                        onClick={handleClose}
-                      >
-                        Cancel
-                      </Button>
-                      <Button type="submit" disabled={isLoading}>
-                        Save
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </form>
-            </Form>
-          </div>
-        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+              control={form.control}
+              name="imgUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input {...field} type="file" onChange={onImageChange} value={undefined}/>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="name..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email </FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {submitError && <p className="text-red-500">{submitError}</p>}
+            <div className="pt-6 space-x-2 flex items-center justify-end w-full">
+              {isLoading ? (
+                <ButtonLoading />
+              ) : (
+                <>
+                  <Button
+                    variant="destructive"
+                    className="border-1"
+                    onClick={handleClose}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isLoading}>
+                    Save
+                  </Button>
+                </>
+              )}
+            </div>
+          </form>
+        </Form>
+        <DialogFooter className="sm:justify-start">
+          <DialogClose asChild></DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-};
+}

@@ -8,7 +8,7 @@ export const getSession = async () => {
 }
 
 export const getAllJobs = async () => {
-    const res = await fetch(`${BACKEND_URL}/job-posts`, { next: { tags: ['job-posts'] } })
+    const res = await fetch(`${BACKEND_URL}/job-posts`, { next: { tags: ['all-jobs'] } })
     const data = await res.json()
     return data
 }

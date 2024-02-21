@@ -17,6 +17,8 @@ export class UsersController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('business')
   createBusiness(@Body() createUserDto: CreateUserDto) {
+    console.log(createUserDto);
+    
     return this.usersService.createBusinessUser(createUserDto);
   }
   @Post('login')

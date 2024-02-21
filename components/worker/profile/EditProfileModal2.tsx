@@ -1,8 +1,19 @@
 "use client";
+
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState} from "react";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useModal } from "@/hooks/useModalStore";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -13,50 +24,50 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { BACKEND_URL } from "@/lib/constants";
 import { useSession } from "next-auth/react";
 import ButtonLoading from "@/components/ButtonLoading";
 
-const formSchema = z.object({
-  institution: z.string().min(1),
-  degree: z.string().min(1),
-  major: z.string().min(1),
-  gradDate: z.string().min(1),
-});
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useModal } from "@/hooks/useModalStore";
-import { useEducation } from "@/hooks/useEducation";
-
-export const AddNewEducationModal = () => {
-  const {addEducation} = useEducation()
+export const EditProfileModal2 = () => {
+  const router = useRouter();
   const { isOpen, onClose, type } = useModal();
-  const isModalOpen = isOpen && type === "addEducation";
+  
+  const formSchema = z.object({
+    username: z.string().min(1),
+    email: z.string().min(1),
+    phoneNumber: z.string().min(1),
+    imgUrl: z.string().min(1),
+  });
+  const isModalOpen = isOpen && type === "editProfile";
+
+  const [isPending, startTransition] = useTransition();
 
   const { data: session } = useSession();
   const [submitError, setSubmitError] = useState("");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      institution: "",
-      degree: "",
-      gradDate: "",
-      major: "",
+      username: "",
+      email: "",
+      phoneNumber: "",
+      imgUrl: "",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
 
+  const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      form.setValue("imgUrl", URL.createObjectURL(file));
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/education`, {
-        method: "POST",
+      const res = await fetch(`${BACKEND_URL}/users`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.accessToken}`,
@@ -64,10 +75,10 @@ export const AddNewEducationModal = () => {
         body: JSON.stringify({ ...values, userId: session?.user?.id }),
       });
       if (res.ok) {
-        addEducation(await res.json());
-        form.reset()
         onClose();
-      
+        startTransition(() => {
+          router.refresh();
+        });
       } else {
         setSubmitError("An unexpected error occurred.");
       }
@@ -75,17 +86,15 @@ export const AddNewEducationModal = () => {
       console.log(error);
     }
   };
-
   const handleClose = () => {
     form.reset();
     onClose();
   };
-
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Education</DialogTitle>
+          <DialogTitle>Edit profile</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2 pb-4">
           <div className="space-y-2">
@@ -93,10 +102,32 @@ export const AddNewEducationModal = () => {
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField
                   control={form.control}
-                  name="institution"
+                  name="imgUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Institute</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="file"
+                          onChange={onImageChange}
+                        />
+                        {form.getValues("imgUrl") && (
+                          <img
+                            src={form.getValues("imgUrl")}
+                            alt="Selected image"
+                          />
+                        )}
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
                       <FormControl>
                         <Input placeholder="name..." {...field} />
                       </FormControl>
@@ -106,10 +137,10 @@ export const AddNewEducationModal = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="degree"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Degree </FormLabel>
+                      <FormLabel>Email </FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -119,10 +150,10 @@ export const AddNewEducationModal = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="major"
+                  name="phoneNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Major</FormLabel>
+                      <FormLabel>Phone Number</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -130,19 +161,7 @@ export const AddNewEducationModal = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="gradDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Graduate year</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="date" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 {submitError && <p className="text-red-500">{submitError}</p>}
                 <div className="pt-6 space-x-2 flex items-center justify-end w-full">
                   {isLoading ? (
@@ -152,7 +171,7 @@ export const AddNewEducationModal = () => {
                       <Button
                         variant="destructive"
                         className="border-1"
-                        onClick={() => onClose()}
+                        onClick={handleClose}
                       >
                         Cancel
                       </Button>

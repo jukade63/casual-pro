@@ -59,7 +59,7 @@ export default function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <CarouselItem
               key={index}
-              className="pl-1 md:basis-1/2 lg:basis-1/3"
+              className="pl-1 md:basis-1/2 lg:basis-1/3 rounded-md"
             >
               <div className="p-1">
                 <Card>
@@ -71,7 +71,7 @@ export default function Testimonials() {
                       height={50}
                       className="mx-auto"
                     />
-                    <p className="text-sm text-gray-500 p-2">
+                    <p className="text-xs text-gray-500 p-2">
                       " {testimonial.text} "
                     </p>
                     <div>

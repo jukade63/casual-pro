@@ -6,7 +6,7 @@ import { BACKEND_URL } from "@/lib/constants";
 
 export const authOptions: NextAuthOptions = {
   pages: {
-    signIn: '/worker/sign-in', 
+    signIn: '/sign-in', 
   },
   providers: [
     Credentials({

@@ -4,15 +4,13 @@ import {
   NotebookPen,
   UserRoundSearch,
 } from "lucide-react";
-import Image from "next/image";
-import React from "react";
 
 export default function HowItWork() {
   return (
     <section className="bg-gray-100 py-16 lg:px-8" id="how-it-works">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-semibold text-center mb-12">
-          How CasualPro Works
+          How <span className="text-rose-700">CasualPro</span> Works
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="flex items-start space-x-4">
@@ -75,7 +73,6 @@ export default function HowItWork() {
               </p>
             </div>
           </div>
-          {/* Add more steps similarly */}
         </div>
       </div>
     </section>

@@ -1,7 +1,6 @@
 import {create } from 'zustand'
 
-export type ModalType = 'editProfile' | 'addEducation' | 'modalOne' | 'modalTwo' 
-
+export type ModalType = 'editProfile' | 'addEducation' 
 
 
 interface ModalData {

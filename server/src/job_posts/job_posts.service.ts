@@ -2,8 +2,8 @@ import { Injectable, NotFoundException, Request } from '@nestjs/common';
 import { CreateJobPostDto } from './dto/create-job_post.dto';
 import { UpdateJobPostDto } from './dto/update-job_post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, ILike, Repository } from 'typeorm';
-import { JobPost } from './entities/job_post.entity';
+import { FindManyOptions, FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { JobPost, JobType } from './entities/job_post.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
 import { User } from 'src/users/entities/user.entity';
 
@@ -41,30 +41,27 @@ export class JobPostsService {
     return savedJobPost
   }
 
-  async findAll(location?: string, category?: string) {
-    let foundJobPosts: JobPost[] = [];
-    const queryOptions: FindManyOptions<JobPost> = {
-      relations: ['business.user'],
-    };
-  
-    if (location && category) {
-      queryOptions.where = [{ location: ILike(`%${location}%`), category: ILike(`%${category}%`) }];
-    } else if (location) {
-      queryOptions.where = { location: ILike(`%${location}%`) };
-    } else if (category) {
-      queryOptions.where = { category: ILike(`%${category}%`) };
+  async findAll(location?: string, category?: string, jobType?: JobType) {
+    
+    let query = this.jobPostRepository.createQueryBuilder('job_post');
+
+    query = query.leftJoinAndSelect('job_post.business', 'business').leftJoinAndSelect('business.user', 'user');
+
+    query = query.select(['job_post', 'business', 'user.username', 'user.phoneNumber', 'user.email']);
+
+    if (location) {
+      query = query.andWhere('EXISTS (SELECT 1 FROM UNNEST(job_post.location) AS loc WHERE loc ILIKE :location)', { location: `%${location}%` });
     }
-  
-    foundJobPosts = await this.jobPostRepository.find(queryOptions);
-  
-    foundJobPosts.forEach(jobPost => {
-      if (jobPost.business && jobPost.business.user) {
-        delete jobPost.business.user.password;
-      }
-    });
-  
-    return foundJobPosts;
+    if (category) {
+      query = query.andWhere('job_post.category ILIKE :category', { category: `%${category}%` });
+    }
+    if (jobType) {
+      query = query.andWhere('job_post.jobType = :jobType', { jobType: jobType });
+    }
+
+    return query.getMany();
   }
+
 
   async findOne(id: number) {
     const jobPost = await this.jobPostRepository.findOne({ where: { id }, relations: ['business.user'] });
@@ -75,7 +72,7 @@ export class JobPostsService {
         delete jobPost.business.user.password;
       }
       return jobPost
-      
+
     }
   }
 

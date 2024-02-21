@@ -2,6 +2,7 @@ import { IsString, IsEmail, IsEnum, IsOptional, isInt, IsInt } from 'class-valid
 import { UserType } from '../entities/user.entity';
 
 export class CreateUserDto {
+  @IsOptional()
   @IsInt()
   readonly id: number;
   @IsString()

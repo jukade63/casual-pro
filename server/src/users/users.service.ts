@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -39,45 +39,42 @@ export class UsersService {
     return user;
   }
 
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    const { email, userType } = createUserDto;
+    
+    const existingUser = await this.userRepository.findOne({ where: { email } });
+    
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
+    
+    const newUser = this.userRepository.create(createUserDto);
+    const savedUser = await this.userRepository.save(newUser);
+    
+    switch (userType) {
+      case 'worker':
+        const newWorker = this.workerRepository.create({ user: savedUser });
+        await this.workerRepository.save(newWorker);
+        break;
+      case 'business':
+        const newBusiness = this.businessRepository.create({ user: savedUser });
+        await this.businessRepository.save(newBusiness);
+        break;
+      default:
+        throw new BadRequestException('Invalid user type');
+    }
+    
+    return savedUser;
+  }
+  
   async createWorkerUser(createUserDto: CreateUserDto): Promise<User> {
-    const { email } = createUserDto;
-
-    const existingUser = await this.userRepository.findOne({ where: { email } });
-
-    if (existingUser) {
-      throw new ConflictException('User with this email already exists');
-    }
-    const newUser = this.userRepository.create(createUserDto)
-
-    const savedUser = await this.userRepository.save(newUser);
-
-    const newWorker = this.workerRepository.create({
-      user: savedUser,
-    })
-
-    await this.workerRepository.save(newWorker)
-
-    return savedUser
+    return this.createUser(createUserDto);
   }
-
+  
   async createBusinessUser(createUserDto: CreateUserDto): Promise<User> {
-    const { email } = createUserDto;
-    const existingUser = await this.userRepository.findOne({ where: { email } });
-
-    if (existingUser) {
-      throw new ConflictException('User with this email already exists');
-    }
-    const newUser = this.userRepository.create(createUserDto)
-    const savedUser = await this.userRepository.save(newUser);
-
-    const newBusiness = this.businessRepository.create({
-      user: savedUser
-    })
-
-    await this.businessRepository.save(newBusiness)
-    return savedUser
+    return this.createUser(createUserDto);
   }
-
+  
   async login(authDto: AuthDto): Promise<any> {
 
     const foundUser = await this.userRepository.findOne({ where: { email: authDto.email } });

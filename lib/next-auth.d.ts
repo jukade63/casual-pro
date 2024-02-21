@@ -10,6 +10,7 @@ declare module "next-auth" {
             userType: string;
             phoneNumber: string;
             imgUrl: string;
+            publicId: string
         };
         accessToken: string;
     }
@@ -23,6 +24,7 @@ declare module "next-auth/jwt" {
             userType: string;
             phoneNumber: string;
             imgUrl: string;
+            publicId: string
         };
         accessToken: string;
     }

@@ -3,6 +3,7 @@ import { JobPostsService } from './job_posts.service';
 import { CreateJobPostDto } from './dto/create-job_post.dto';
 import { UpdateJobPostDto } from './dto/update-job_post.dto';
 import { AuthGuard } from 'src/users/user.guard';
+import { JobType } from './entities/job_post.entity';
 
 @Controller('job-posts')
 export class JobPostsController {
@@ -17,9 +18,10 @@ export class JobPostsController {
   @Get()
   findAll(
     @Query('location') location: string,
-    @Query('category') category: string
+    @Query('category') category: string,
+    @Query('jobType') jobType: JobType
   ) {
-    return this.jobPostsService.findAll(location, category);
+    return this.jobPostsService.findAll(location, category, jobType);
   }
 
   @Get(':id')

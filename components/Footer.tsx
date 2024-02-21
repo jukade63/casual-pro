@@ -2,84 +2,84 @@ import React from "react";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-white">
-    <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+    <footer className="bg-white mt-10">
+    <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="lg:flex lg:gap-8 justify-center">
         <div className="mt-8 grid grid-cols-2 gap-8 lg:mt-0 lg:grid-cols-5 lg:gap-y-16">
   
           <div className="col-span-2 sm:col-span-1">
-            <p className="font-medium text-gray-900">Company</p>
+            <p className="font-medium text-gray-900 text-sm">Company</p>
   
             <ul className="mt-6 space-y-4 text-sm">
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> About </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> About </a>
               </li>
   
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> Meet the Team </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> Meet the Team </a>
               </li>
   
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> Accounts Review </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> Accounts Review </a>
               </li>
             </ul>
           </div>
   
           <div className="col-span-2 sm:col-span-1">
-            <p className="font-medium text-gray-900">Helpful Links</p>
+            <p className="font-medium text-gray-900 text-sm">Helpful Links</p>
   
             <ul className="mt-6 space-y-4 text-sm">
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> Contact </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> Contact </a>
               </li>
   
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> FAQs </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> FAQs </a>
               </li>
   
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> Live Chat </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> Live Chat </a>
               </li>
             </ul>
           </div>
   
           <div className="col-span-2 sm:col-span-1">
-            <p className="font-medium text-gray-900">Legal</p>
+            <p className="font-medium text-gray-900 text-sm">Legal</p>
   
             <ul className="mt-6 space-y-4 text-sm">
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> Accessibility </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> Accessibility </a>
               </li>
   
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> Returns Policy </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> Returns Policy </a>
               </li>
   
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> Refund Policy </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> Refund Policy </a>
               </li>
   
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> Hiring Statistics </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> Hiring Statistics </a>
               </li>
             </ul>
           </div>
   
           <div className="col-span-2 sm:col-span-1">
-            <p className="font-medium text-gray-900">Downloads</p>
+            <p className="font-medium text-gray-900 text-sm">Downloads</p>
   
             <ul className="mt-6 space-y-4 text-sm">
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> Marketing Calendar </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> Marketing Calendar </a>
               </li>
   
               <li>
-                <a href="#" className="text-gray-700 transition hover:opacity-75"> SEO Infographics </a>
+                <a href="#" className="text-gray-700 transition hover:opacity-75 text-sm"> SEO Infographics </a>
               </li>
             </ul>
           </div>
   
-          <ul className="col-span-2 flex justify-start gap-6 lg:col-span-5 lg:justify-end">
+          <ul className="col-span-2 flex justify-center gap-6 lg:col-span-5">
             <li>
               <a
                 href="#"
@@ -176,11 +176,11 @@ const Footer: React.FC = () => {
         </div>
       </div>
   
-      <div className="mt-8 border-t border-gray-100 pt-8">
-        <div className="sm:flex sm:justify-between">
-          <p className="text-xs text-gray-500">&copy; 2022. Company Name. All rights reserved.</p>
+      <div className="mt-4 border-t border-gray-100 pt-8">
+        <div className="่flex justify-center sm:flex sm:justify-between">
+          <p className="text-xs text-gray-500">&copy; 2022. Casual Pro. All rights reserved.</p>
   
-          <ul className="mt-8 flex flex-wrap justify-start gap-4 text-xs sm:mt-0 lg:justify-end">
+          <ul className="mt-8 flex flex-wrap justify-center gap-4 text-xs sm:mt-0 lg:justify-end">
             <li>
               <a href="#" className="text-gray-500 transition hover:opacity-75"> Terms & Conditions </a>
             </li>

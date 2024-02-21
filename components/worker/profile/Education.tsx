@@ -1,23 +1,41 @@
-import { getAllEducation, getSession } from "@/lib/apiCalls/fetchers";
-import { revalidateTag } from "next/cache";
+"use client";
+import { useModal } from "@/hooks/useModalStore";
+import { getAllEducation } from "@/lib/apiCalls/fetchers";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import EducationRow from "../EducationRow";
+import { useEducation } from "@/hooks/useEducation";
+import { Button } from "@/components/ui/button";
 
-const Education = async () => {
-  revalidateTag('education')
-  let education;
-  const session = await getSession();
-  if (session) {
-    education = await getAllEducation(session?.user?.id);
-  }
+export const Education = () => {
+  const { education, setEducation} = useEducation()
+  const { data: session } = useSession();
+  const { onOpen } = useModal();
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const educationData = session?.user.id
+          ? await getAllEducation(session?.user.id)
+          : [];
+        setEducation(educationData);
+      } catch (error) {
+        console.error("Error fetching education data:", error);
+      }
+    }
+
+    fetchData();
+  }, [setEducation]);
+
   return (
-    <div className="mb-4">
-      <h2 className="mb-2 font-semibold text-xl">
-        <span role="img" aria-label="graduation cap" className="mr-2">
-          🎓
-        </span>
-        Education
-      </h2>
-      {education.length > 0 ? (
+    <>
+      <div className="mb-4">
+        <h2 className="mb-2 font-semibold text-xl">
+          <span role="img" aria-label="graduation cap" className="mr-2">
+            🎓
+          </span>
+          Education
+        </h2>
         <ul className="pl-6">
           {education.length > 0 ? (
             <table className="w-full border-collapse text-center">
@@ -31,12 +49,14 @@ const Education = async () => {
                 </tr>
               </thead>
               <tbody>
-                {education.map((edu: any, index: number) => (
-                 <EducationRow key={index} index={index} 
-                 education={edu} 
-                 accessToken={session?.accessToken}
-                 userId={session?.user?.id}
-                 />
+                {education.map((edu: Education, index: number) => (
+                  <EducationRow
+                    key={index}
+                    index={index}
+                    education={edu}
+                    accessToken={session?.accessToken}
+                    userId={session?.user?.id}
+                  />
                 ))}
               </tbody>
             </table>
@@ -44,14 +64,9 @@ const Education = async () => {
             <p>No education data available.</p>
           )}
         </ul>
-      ) : (
-        <p>No education data available.</p>
-      )}
-      <button>Add Education</button>
-      <div className="mt-2 w-full text-center">
+        <div className="mt-2 w-full text-center"></div>
       </div>
-    </div>
+      <Button onClick={() => onOpen("addEducation")} >Add Education</Button>
+    </>
   );
 };
-
-export default Education;

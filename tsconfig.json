@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/worker/(auth)/sign-up", "app/worker/(account)/dashboard"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/worker/sign-up", "app/worker/(account)/dashboard"],
   "exclude": ["node_modules"]
 }

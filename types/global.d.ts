@@ -51,7 +51,9 @@ declare global {
         userType: string;
         phoneNumber: string;
         imgUrl: string;
+        publicId: string;
     };
     accessToken: string;
 }
+
 }

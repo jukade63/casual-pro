@@ -38,8 +38,8 @@ const formSchema = z
   });
 
 export function SignUpForm() {
-  const [error, setError] = useState("");
   const [consentChecked, setConsentChecked] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -53,22 +53,22 @@ export function SignUpForm() {
     },
   });
 
-  const validForm = form.formState.isValid;
+  const isValidForm = form.formState.isValid;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch(BACKEND_URL + "/users/worker", {
+      const response = await fetch(BACKEND_URL + "/users/business", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...values,
-          userType: "worker",
+          userType: "business",
         }),
       });
       if (response.ok) {
-        router.push("/worker/sign-in");
+        router.push("/sign-in");
       }
     } catch (error) {
       setError("Sign-up failed. try again");
@@ -80,7 +80,10 @@ export function SignUpForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 min-w-[320px]">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 min-w-[320px]"
+      >
         <FormField
           control={form.control}
           name="username"
@@ -136,11 +139,6 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        {error && (
-          <p className="text-red-500 text-xs bg-red-200 p-2 rounded-sm mb-2">
-            {error}
-          </p>
-        )}
 
         <FormItem>
           <div className="flex items-center gap-1">
@@ -156,9 +154,17 @@ export function SignUpForm() {
             </label>
           </div>
         </FormItem>
+        {error && (
+          <p className="text-red-500 text-xs bg-red-200 p-2 rounded-sm mb-2">
+            {error}
+          </p>
+        )}
 
         <div className="flex justify-center">
-          <Button type="submit" disabled={!validForm || loading || !consentChecked}>
+          <Button
+            type="submit"
+            disabled={!isValidForm || loading || !consentChecked}
+          >
             Sign Up
           </Button>
         </div>

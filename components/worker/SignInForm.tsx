@@ -62,7 +62,10 @@ export function SignInForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 min-w-[320px]"
+      >
         <FormField
           control={form.control}
           name="email"
@@ -105,18 +108,22 @@ export function SignInForm() {
               {error}
             </p>
           )}
-          <p className="text-sm">
-            Haven't signed up yet?{" "}
-            <span
-              onClick={() => router.push("/worker/sign-up")}
-              className="text-blue-500 hover:underline cursor-pointer"
-            >
-              Sign up
-            </span>
+          <p className="text-sm">Haven't signed up yet? </p>
+          <p
+            onClick={() => router.push("/worker/sign-up")}
+            className="text-blue-600 text-sm hover:underline cursor-pointer mt-2"
+          >
+            Sign up as a worker
+          </p>
+          <p className="text-sm">or</p>
+          <p
+            onClick={() => router.push("/business/sign-up")}
+            className="text-blue-600 text-sm hover:underline cursor-pointer "
+          >
+            Sign up as a business
           </p>
         </div>
       </form>
     </Form>
   );
 }
-
