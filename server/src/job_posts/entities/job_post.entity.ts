@@ -1,5 +1,6 @@
 import { Applications } from 'src/applications/entities/application.entity';
 import { Business } from 'src/businesses/entities/business.entity';
+import { AbstractEntity } from 'src/database/Abstract.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany, OneToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 
@@ -16,9 +17,7 @@ export enum Status {
 }
 
 @Entity()
-export class JobPost extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class JobPost extends AbstractEntity<JobPost> {
 
   @ManyToOne(() => Business, (business) => business.jobPosts, {onDelete: 'CASCADE'})
   @JoinColumn()
@@ -57,10 +56,11 @@ export class JobPost extends BaseEntity {
   @Column({ default: true })
   available: boolean;
 
-  @Column({ type: 'enum', enum: Status })
+  @Column({ type: 'enum', enum: Status, default: Status.Pending })
   status: Status;
 
   @OneToMany(() => Applications, (application) => application.jobPost)
+  @JoinColumn()
   applications: Applications[];
 
   @OneToOne(() => Jobs)

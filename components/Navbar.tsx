@@ -5,11 +5,16 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import logo from "../public/logo.png";
 import Image from "next/image";
+import { Button } from "./ui/button";
+import { signOut, useSession } from "next-auth/react";
 
 function Navbar() {
+  const { data: session} = useSession();
+
   const pathname = usePathname();
 
-  const currentPathClass = "text-blue-500 hover:no-underline hover:cursor-default"
+  const currentPathClass =
+    "text-blue-500 hover:no-underline hover:cursor-default";
 
   return (
     <div className="bg-white shadow-md">
@@ -41,8 +46,7 @@ function Navbar() {
         >
           Find workers
         </Link>
-        <div className="ml-auto">
-          <Link
+        <Link
             href="/business/#how-it-works"
             className={cn(
               "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
@@ -51,12 +55,25 @@ function Navbar() {
           >
             How it works
           </Link>
-          <Link
-            href="/about"
-            className="ml-4 text-gray-800 hover:text-blue-500"
-          >
-            About
-          </Link>
+        <div className="ml-auto flex gap-4 items-center">
+        
+          {session && (
+            <div className="flex flex-col items-center">
+              <span className="text-gray-800 text-xs rounded-sm bg-slate-200 px-2 py-1">
+                Logged in as
+              </span>
+              <span className="capitalize">{session?.user?.username}</span>
+            </div>
+          )}
+          {session ? (
+            <Button onClick={() => signOut()} variant={"destructive"}>
+              Log out
+            </Button>
+          ) : (
+            <Link href="/sign-in">
+              <Button>Sign in</Button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

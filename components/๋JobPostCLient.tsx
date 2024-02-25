@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import JobSearch from "@/app/worker/JobSearch";
 import { useJobPost } from "@/hooks/useJobPost";
 import FilteredJobList from "./worker/FilteredJobList";
@@ -10,18 +10,24 @@ export default function JobPostCLient({
   children: React.ReactNode;
 }) {
   const { jobPosts } = useJobPost();
-  const [isFound, setIsFound] = React.useState(false);
-  
-  if(jobPosts.length === 0){
+  const [isFound, setIsFound] = React.useState(true);
+
+  useEffect(() => {
     setTimeout(() => {
       setIsFound(true);
-    }, 5000);
-  }
+    }, 3000);
+  }, [jobPosts]);
 
   return (
     <>
-      <JobSearch setIsFound={setIsFound}/>
-      {!isFound ? <p className="text-lg text-center">No jobs found</p> : null}
+      <JobSearch setIsFound={setIsFound} />
+      {!isFound ? (
+        <div className="text-center">
+          <p className="text-lg bg-sky-200 text-gray-500 inline-block px-4 py-1 rounded-md">
+            No jobs found
+          </p>
+        </div>
+      ) : null}
       {jobPosts.length > 0 ? <FilteredJobList /> : children}
     </>
   );

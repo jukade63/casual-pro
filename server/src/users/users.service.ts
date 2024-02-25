@@ -75,14 +75,22 @@ export class UsersService {
     return this.createUser(createUserDto);
   }
   
+
   async login(authDto: AuthDto): Promise<any> {
+
+    console.log(authDto);
+    
 
     const foundUser = await this.userRepository.findOne({ where: { email: authDto.email } });
     if (!foundUser) {
+      console.log('User not found');
+      
       throw new NotFoundException('Credentials incorrect');
     }
 
     const pwMatches = await argon.verify(foundUser.password, authDto.password)
+    console.log({ pwMatches });
+    
     if (!pwMatches) {
       throw new NotFoundException('Credentials incorrect');
     }

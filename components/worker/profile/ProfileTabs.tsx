@@ -1,6 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Skills from "./Skills";
-import BasicInfo from "./BasicInfo";
 import { Education } from "./Education";
 import Experience from "./Experience";
 

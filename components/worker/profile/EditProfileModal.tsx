@@ -26,15 +26,16 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ButtonLoading from "@/components/ButtonLoading";
 import { useSession } from "next-auth/react";
 
 export default function EditProfileModal() {
+  const { isOpen, onClose, type, data } = useModal();
+  const [defaultValue, setDefaultValue] = useState({});
   const { update } = useSession();
   const router = useRouter();
   const [submitError, setSubmitError] = useState("");
-  const { isOpen, onClose, type, data } = useModal();
   const session = data?.session
 
   const isModalOpen = isOpen && type === "editProfile";
@@ -52,12 +53,21 @@ export default function EditProfileModal() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: session?.user.username || "",
-      email: session?.user.email || "",
-      phoneNumber: session?.user.phoneNumber || "",
-      imgUrl: session?.user.imgUrl || "",
+      username: "",
+      email: "",
+      phoneNumber: "",
+      imgUrl: "",
     },
   });
+
+  useEffect(() => {
+    if (session) {
+      form.setValue("username", session.user.username);
+      form.setValue("email", session.user.email);
+      form.setValue("phoneNumber", session.user.phoneNumber);
+      form.setValue("imgUrl", session.user.imgUrl);
+    }
+  }, [session, form.setValue]);
 
   const isLoading = form.formState.isSubmitting;
 

@@ -11,7 +11,7 @@ export default function JobCard({ job }: { job: JobPost }) {
       key={job.id}
       className="mb-4 mx-auto p-3 flex gap-2 max-w-[800px] shadow-sm relative"
     >
-      <div className="hidden md:flex flex-col justify-center itemes-center border-r border-gray-300 ">
+      <div className="hidden md:flex flex-col justify-center itemes-center border-r border-gray-300">
         <div className="min-w-[200px]">{job.business.user.username}</div>
         {/* <div>{job.business.user.imgUrl}</div> */}
       </div>
@@ -57,7 +57,7 @@ export default function JobCard({ job }: { job: JobPost }) {
               </span>
             ))}
           </div>
-          <div className="mt-5 text-xs text-gray-500">{job.category}</div>
+          <div className="mt-14 text-xs text-gray-500">{job.category}</div>
         </div>
       </div>
       <Link

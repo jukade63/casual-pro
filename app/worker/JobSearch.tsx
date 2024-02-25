@@ -48,13 +48,14 @@ const JobSearch = ({ setIsFound }: Props) => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-2 my-5 bg-white rounded-md shadow-md flex flex-col md:flex-row gap-2">
+    <div className="max-w-xl mx-auto p-2 my-5 bg-white rounded-md shadow-md flex flex-col md:flex-row gap-2">
       <input
         type="text"
         id="category"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="w-full md:w-[120px] bg-gray-200 p-2 focus:outline-none rounded-md"
+        className="w-full md:w-[120px] bg-gray-200 p-2 focus:outline-none rounded-md caret-blue-600
+        placeholder:text-sm "
         placeholder="Category"
       />
       <input
@@ -62,7 +63,8 @@ const JobSearch = ({ setIsFound }: Props) => {
         id="location"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
-        className="w-full md:w-[120px] bg-gray-200 p-2 focus:outline-none rounded-md"
+        className="w-full md:w-[120px] bg-gray-200 p-2 focus:outline-none rounded-md caret-blue-600
+        placeholder:text-sm"
         placeholder="Location"
       />
       <Select onValueChange={setJobType}>

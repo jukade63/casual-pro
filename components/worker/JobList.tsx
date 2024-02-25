@@ -1,11 +1,6 @@
 "use server"
-import { Card } from "../ui/card";
 import { getAllJobs } from "@/lib/apiCalls/fetchers";
-import { Building2 } from "lucide-react";
 import { revalidateTag } from "next/cache";
-import { cn } from "@/lib/utils";
-import { formatDateTimeRange } from "@/lib/formatDateTimeRange";
-import Link from "next/link";
 import JobCard from "@/app/worker/JobCard";
 
 export default async function JobList() {
@@ -14,7 +9,7 @@ export default async function JobList() {
 
   return (
     <div className="w-screen">
-      <h1 className="text-xl font-semibold mb-4">Available Jobs</h1>
+      <h1 className="text-lg font-semibold text-gray-600 mx-5 md:mx-15 lg:mx-52 mb-2 px-4 py-2 rounded-md bg-slate-200 inline-block">Available Jobs</h1>
       {jobs.map((job) => (
        <JobCard key={job.id} job={job}/>
       ))}

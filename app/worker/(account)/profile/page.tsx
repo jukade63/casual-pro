@@ -1,7 +1,5 @@
-import Experience from "@/components/worker/profile/Experience";
-import General from "@/components/worker/profile/General";
+import General from "@/components/BasicInfo";
 import { ProfileTabs } from "@/components/worker/profile/ProfileTabs";
-import Skills from "@/components/worker/profile/Skills";
 import React, { Suspense } from "react";
 
 const Profile = () => {

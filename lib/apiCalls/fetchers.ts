@@ -13,6 +13,19 @@ export const getAllJobs = async () => {
     return data
 }
 
+export const getJobPostsByBusiness = async () => {
+    const session = await getSession()
+    if (!session) return new Error('Not autherized')
+    const { accessToken } = session
+    const res = await fetch(`${BACKEND_URL}/job-posts/business`,
+        {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        }
+    )
+    const data = await res.json()
+    return data
+}
+
 export const getJob = async (id: number) => {
     const res = await fetch(`${BACKEND_URL}/job-posts/${id}`)
     const data = await res.json()
@@ -20,6 +33,6 @@ export const getJob = async (id: number) => {
 }
 
 export const getAllEducation = async (userId: number) => {
-    const res = await fetch(`${BACKEND_URL}/education/${userId}`, {next: {tags: ['education']}})
+    const res = await fetch(`${BACKEND_URL}/education/${userId}`, { next: { tags: ['education'] } })
     return await res.json()
 }

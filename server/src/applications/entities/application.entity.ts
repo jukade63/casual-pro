@@ -1,3 +1,4 @@
+import { AbstractEntity } from 'src/database/Abstract.entity';
 import { JobPost } from 'src/job_posts/entities/job_post.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
@@ -10,14 +11,12 @@ export enum ApplicationStatus {
 }
 
 @Entity()
-export class Applications extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class Applications extends AbstractEntity<Applications> {
 
   @CreateDateColumn({ type: 'timestamptz' })
   appliedAt: Date;
 
-  @Column({ type: 'enum', enum: ApplicationStatus })
+  @Column({ type: 'enum', enum: ApplicationStatus, default: ApplicationStatus.Pending })
   status: ApplicationStatus;
 
   @ManyToOne(() => Worker, (worker) => worker.applications, {onDelete: 'CASCADE'})

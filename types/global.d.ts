@@ -17,6 +17,17 @@ declare global {
     user: User;
   }
 
+  interface Worker {
+    id: number;
+    user: User;
+    availableFrom: Date;
+    availableTo: Date;
+    education: Education[];
+    experiences: Experience[];
+    skills: Skill[];
+
+  }
+
   interface JobPost {
     id: number;
     title: string;
@@ -32,6 +43,17 @@ declare global {
     available: boolean;
     status: string;
     business: Business;
+    applications: Application[];
+  }
+
+  interface Application {
+    id: number;
+    worker: Worker;
+    jobPost: JobPost;
+    status: string;
+    createdAt: string;
+
+
   }
 
   interface Education {

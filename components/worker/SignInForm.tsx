@@ -52,7 +52,7 @@ export function SignInForm() {
         setError("Invalid email or password. Please try again.");
       } else {
         setLoading(false);
-        router.push("/worker/dashboard");
+        router.push("/");
       }
     } catch (error) {
       setError("An unexpected error occurred. Please try again later.");

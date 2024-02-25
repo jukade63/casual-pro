@@ -3,10 +3,13 @@ import Header from "@/components/Header";
 import JobCategory from "@/components/JobCategory";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import JobList from "@/components/worker/JobList";
+// import JobList from "@/components/worker/JobList";
+// import { getSession } from "@/lib/apiCalls/fetchers";
 import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  // const session = await getSession()
+  // if (!session) return null
   return (
     <div>
       <Navbar />

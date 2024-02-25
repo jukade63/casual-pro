@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config'
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
@@ -14,6 +14,7 @@ import { RatingsModule } from './ratings/ratings.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),  
@@ -29,6 +30,11 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     JobsModule, 
     RatingsModule, CloudinaryModule],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor
+    }
+  ],
 })
 export class AppModule { }

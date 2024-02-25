@@ -3,17 +3,16 @@ import React from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import placeholder from "@/public/worker-placeholder.png";
-import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/useModalStore";
 import { SquarePen } from "lucide-react";
 
-export default function General() {
+export default function BasicInfo() {
   const { onOpen } = useModal();
   const { data: session } = useSession();
   const imgSrc = session?.user?.imgUrl || placeholder;
 
   return (
-    <div className="flex gap-4 items-center justify-evenly">
+    <div className="flex gap-4 items-center justify-evenly bg-orange-400 text-white p-5 max-w-3xl rounded-md">
       <div className="flex gap-4 items-center">
         <Image
           src={imgSrc}
@@ -24,13 +23,13 @@ export default function General() {
         />
         <div className="flex flex-col gap-2">
           <h2 className="font-semibold text-gray-700">
-            {session?.user?.username}
+            {session?.user?.username || ""}
           </h2>
           <div className="text-sm text-gray-600">
-            Email : {session?.user?.email}
+            Email : {session?.user?.email || ""}
           </div>
           <div className="text-sm text-gray-600">
-            Phone Number : {session?.user?.phoneNumber}
+            Phone Number : {session?.user?.phoneNumber || ""}
           </div>
         </div>
       </div>
