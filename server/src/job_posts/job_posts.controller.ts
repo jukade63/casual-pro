@@ -47,9 +47,12 @@ export class JobPostsController {
     return this.jobPostsService.findOne(id);
   }
 
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
+  @Role(UserType.Business)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateJobPostDto: UpdateJobPostDto) {
-    return this.jobPostsService.update(+id, updateJobPostDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateJobPostDto: UpdateJobPostDto) {
+    return this.jobPostsService.update(id, updateJobPostDto);
   }
 
   @Delete(':id')

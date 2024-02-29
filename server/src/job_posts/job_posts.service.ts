@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { JobPost, JobType } from './entities/job_post.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
 import { User } from 'src/users/entities/user.entity';
+import { application } from 'express';
 
 
 @Injectable()
@@ -63,14 +64,18 @@ export class JobPostsService {
 
 
   async findOne(id: number) {
-    const jobPost = await this.jobPostRepository.findOne({ where: { id }, relations: ['business.user'] });
-    if (!jobPost) {
-      throw new NotFoundException(`JobPost with id ${id} not found`);
+    const jobPost = await this.jobPostRepository
+    .createQueryBuilder('job_post')
+    .where('job_post.id = :id', { id })
+    .leftJoinAndSelect('job_post.applications', 'applications')
+    .leftJoinAndSelect('applications.worker', 'worker')
+    .leftJoinAndSelect('worker.user', 'user')
+    .leftJoinAndSelect('worker.education', 'education')
+    .leftJoinAndSelect('worker.experiences', 'experiences')
+    .leftJoinAndSelect('worker.skills', 'skills')
+    .getOne();
 
-    }
-    return jobPost
-
-
+  return jobPost;
   }
 
   async findAllByBusiness(req) {
@@ -106,8 +111,13 @@ export class JobPostsService {
     }
   }
 
-  update(id: number, updateJobPostDto: UpdateJobPostDto) {
-    return `This action updates a #${id} jobPost`;
+  async update(id: number, updateJobPostDto: UpdateJobPostDto) {
+    const jobPost = await this.jobPostRepository.findOneBy({ id });
+    if (!jobPost) {
+      return new NotFoundException('job post not found')
+    }
+    return await this.jobPostRepository.save({ ...jobPost, ...updateJobPostDto });
+    
   }
 
   remove(id: number) {

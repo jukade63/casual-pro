@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
 import { z } from "zod";
+import { JobType } from "./JobPostForm";
+import { useFieldArray, useForm } from "react-hook-form";
+import { jobPostSchema } from "@/lib/schemas/jobPostSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
   Form,
@@ -13,20 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { CalendarIcon, MinusCircle, Plus } from "lucide-react";
-import { Textarea } from "../ui/textarea";
-import { jobPostSchema } from "@/lib/schemas/jobPostSchema";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Label } from "../ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "../ui/calendar";
-import { createJobPost } from "@/lib/apiRequests/createJobPost";
-import { generateTimeOptions } from "@/lib/functions.ts/genetateTimeOptions";
 import {
   Select,
   SelectContent,
@@ -34,83 +21,87 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+
+import { CalendarIcon, MinusCircle, Plus } from "lucide-react";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar } from "../ui/calendar";
+import { generateTimeOptions } from "@/lib/functions.ts/genetateTimeOptions";
 import { concatDateTime } from "@/lib/functions.ts/concatDateTime";
+import { updateJobPost } from "@/lib/apiRequests/updateJobPost";
+import { useRouter } from "next/navigation";
 
-export enum JobType {
-  Casual = "casual",
-  PartTime = "part-time",
-  Temporary = "temporary",
-}
-
-export enum Status {
-  Pending = "pending",
-  Approved = "approved",
-  Rejected = "rejected",
-}
-
-export function JobPostForm() {
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
+export default function EditJobPost({ jobPost }: { jobPost: JobPost }) {
+  
   const router = useRouter();
-
   const form = useForm<z.infer<typeof jobPostSchema>>({
     resolver: zodResolver(jobPostSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      requirements: [
-        {
-          requirement: "",
-        },
-      ],
-      location: ["", "", ""],
-      jobType: JobType.Casual,
-      paymentAmount: "",
-      category: "",
-      startDate: new Date(),
-      endDate: new Date(),
-      startTime: "00:00",
-      endTime: "00:00",
+      title: jobPost.title,
+      description: jobPost.description,
+      requirements: jobPost.requirements.map((requirement) => ({
+        requirement,
+      })),
+      location: jobPost.location,
+      jobType: jobPost.jobType as JobType,
+      paymentAmount: jobPost.paymentAmount.toString(),
+      category: jobPost.category,
+      startDate: new Date(jobPost.startDate),
+      endDate: new Date(jobPost.endDate),
+      startTime: jobPost.startDate.split("T")[1].slice(0, 5),
+      endTime: jobPost.endDate.split("T")[1].slice(0, 5),
     },
   });
+
+  const {
+    control,
+    getValues,
+    formState: { isDirty },
+  } = form;
+
   const { fields, append, remove } = useFieldArray({
+    control,
     name: "requirements",
-    control: form.control,
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState("");
+  
 
-  const validForm = form.formState.isValid;
+  const onSubmit = async (values: z.infer<typeof jobPostSchema>) => {
+    const startDateWithTime = concatDateTime(values.startDate, values.startTime);
+    const endDateWithTime = concatDateTime(values.endDate, values.endTime);
 
-  async function onSubmit(values: z.infer<typeof jobPostSchema>) {
+    console.log(startDateWithTime, endDateWithTime);
     
-    const requirementValues = values.requirements.map(
-      (item) => item.requirement
-    );
 
     const sanitizedValues = {
       ...values,
-      startDate: concatDateTime(values.startDate, values.startTime),
-      endDate: concatDateTime(values.endDate, values.endTime),
-      requirements: requirementValues,
+      startDate: startDateWithTime,
+      endDate: endDateWithTime,
+      requirements: values.requirements.map((item) => item.requirement),
       paymentAmount: +values.paymentAmount,
     };
-
     console.log(sanitizedValues);
-
+    
     try {
-      await createJobPost(sanitizedValues);
-      router.push("/business/job-posts");
+      const data = await updateJobPost(+jobPost.id!, sanitizedValues);
+      console.log(data);
+      
+      // router.push("/business/job-posts");
     } catch (error) {
       setError("An unexpected error occurred. Please try again later.");
       console.log(error);
     }
-  }
-
+  };
   return (
     <section>
-      <h1 className="text-xl font-semibold pt-3 text-center">
-        Request a job post
-      </h1>
+      <h1 className="text-xl font-semibold pt-3 text-center">Edit job post</h1>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -123,7 +114,7 @@ export function JobPostForm() {
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={!isEditing}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -136,7 +127,7 @@ export function JobPostForm() {
               <FormItem className="w-full">
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea {...field} className="resize-none bg-gray-50" />
+                  <Textarea {...field} className="resize-none bg-gray-50" disabled={!isEditing}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -150,7 +141,7 @@ export function JobPostForm() {
                 <FormItem className="col-span-2">
                   <FormLabel>Location - Address</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled={!isEditing}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -163,7 +154,7 @@ export function JobPostForm() {
                 <FormItem className="w-full">
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled={!isEditing}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -176,7 +167,7 @@ export function JobPostForm() {
                 <FormItem className="w-full">
                   <FormLabel>State</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled={!isEditing}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -194,7 +185,7 @@ export function JobPostForm() {
                   render={({ field }) => (
                     <FormItem className="w-full flex justify-center items-center gap-2">
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} disabled={!isEditing}/>
                       </FormControl>
                       <FormMessage />
                       <MinusCircle
@@ -228,6 +219,7 @@ export function JobPostForm() {
                   className="flex gap-2 mt-2"
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={!isEditing}
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="casual" id="casual" />
@@ -254,7 +246,7 @@ export function JobPostForm() {
               <FormItem>
                 <FormLabel>Payment Amount</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input type="number" {...field} disabled={!isEditing}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -267,7 +259,7 @@ export function JobPostForm() {
               <FormItem>
                 <FormLabel>Category</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter category" {...field} />
+                  <Input placeholder="Enter category" {...field} disabled={!isEditing}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -290,6 +282,7 @@ export function JobPostForm() {
                               "w-[240px] pl-3 text-left font-normal mt-2 bg-gray-50",
                               !field.value && "text-muted-foreground"
                             )}
+                            disabled={!isEditing}
                           >
                             {field.value ? (
                               format(field.value, "PPP")
@@ -315,7 +308,7 @@ export function JobPostForm() {
                 )}
               />
               <div className="self-end">
-              <FormField
+                <FormField
                   control={form.control}
                   name="startTime"
                   render={({ field }) => (
@@ -323,6 +316,7 @@ export function JobPostForm() {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={!isEditing}
                       >
                         <FormControl>
                           <SelectTrigger className="w-[120px]">
@@ -358,6 +352,7 @@ export function JobPostForm() {
                               "w-[240px] pl-3 text-left font-normal mt-2 bg-gray-50",
                               !field.value && "text-muted-foreground"
                             )}
+                            disabled={!isEditing}
                           >
                             {field.value ? (
                               format(field.value, "PPP")
@@ -391,6 +386,7 @@ export function JobPostForm() {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={!isEditing}
                       >
                         <FormControl>
                           <SelectTrigger className="w-[120px]">
@@ -418,10 +414,34 @@ export function JobPostForm() {
             </p>
           )}
 
-          <div className="flex justify-center">
-            <Button type="submit" disabled={!validForm || loading}>
-              Create Job Post
-            </Button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className={`bg-rose-700 text-white py-2 px-4 rounded-md hover:bg-rose-900 ${
+                isEditing ? "hidden" : ""
+              }`}
+              onClick={() => setIsEditing(true)}
+            >
+              Edit
+            </button>
+
+            <button
+              type="submit"
+              className={`bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:bg-gray-200 disabled:text-gray-400 ${
+                isEditing ? "" : "hidden"
+              }`}
+              disabled={!isEditing || !isDirty}
+            >
+              Submit
+            </button>
+            <button
+              onClick={() => setIsEditing(false)}
+              className={`bg-gray-200 py-2 px-4 rounded-md text-red-500 border-2 border-red-500 ${
+                isEditing ? "" : "hidden"
+              }`}
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </Form>

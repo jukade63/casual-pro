@@ -7,9 +7,10 @@ import logo from "../public/logo.png";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { signOut, useSession } from "next-auth/react";
+import { LogOut } from "lucide-react";
 
 function Navbar() {
-  const { data: session} = useSession();
+  const { data: session } = useSession();
 
   const pathname = usePathname();
 
@@ -47,16 +48,15 @@ function Navbar() {
           Find workers
         </Link>
         <Link
-            href="/business/#how-it-works"
-            className={cn(
-              "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
-              pathname === "/how-it-works" ? currentPathClass : ""
-            )}
-          >
-            How it works
-          </Link>
+          href="/business/#how-it-works"
+          className={cn(
+            "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
+            pathname === "/how-it-works" ? currentPathClass : ""
+          )}
+        >
+          How it works
+        </Link>
         <div className="ml-auto flex gap-4 items-center">
-        
           {session && (
             <div className="flex flex-col items-center">
               <span className="text-gray-800 text-xs rounded-sm bg-slate-200 px-2 py-1">
@@ -66,8 +66,13 @@ function Navbar() {
             </div>
           )}
           {session ? (
-            <Button onClick={() => signOut()} variant={"destructive"}>
-              Log out
+            <Button
+              onClick={() => signOut()}
+              variant="secondary"
+              className="text-sm space-x-2 bg-slate-100 border border-gray-300"
+            >
+              <span>Sign out</span>
+
             </Button>
           ) : (
             <Link href="/sign-in">

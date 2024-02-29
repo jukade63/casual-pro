@@ -1,5 +1,5 @@
 "use server"
-import { getAllJobs } from "@/lib/apiCalls/fetchers";
+import { getAllJobs } from "@/lib/apiRequests/fetchers";
 import { revalidateTag } from "next/cache";
 import JobCard from "@/app/worker/JobCard";
 

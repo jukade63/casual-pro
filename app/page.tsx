@@ -3,7 +3,6 @@ import Header from "@/components/Header";
 import JobCategory from "@/components/JobCategory";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-// import JobList from "@/components/worker/JobList";
 // import { getSession } from "@/lib/apiCalls/fetchers";
 import Link from "next/link";
 
@@ -12,7 +11,9 @@ export default async function Home() {
   // if (!session) return null
   return (
     <div>
-      <Navbar />
+      <nav className="hidden md:block">
+        <Navbar />
+      </nav>
       <Header />
       <div className="mx-auto text-center mt-8">
         <h2 className="text-2xl font-semibold mb-4">Ready to get started?</h2>

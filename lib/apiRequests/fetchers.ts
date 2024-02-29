@@ -2,9 +2,11 @@
 import { getServerSession } from "next-auth"
 import { BACKEND_URL } from "../constants"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { redirect } from "next/navigation"
 
 export const getSession = async () => {
-    return await getServerSession(authOptions)
+    const session = await getServerSession(authOptions)
+    return session
 }
 
 export const getAllJobs = async () => {
@@ -15,21 +17,33 @@ export const getAllJobs = async () => {
 
 export const getJobPostsByBusiness = async () => {
     const session = await getSession()
-    if (!session) return new Error('Not autherized')
+    if (!session) return redirect('/sign-in')
     const { accessToken } = session
     const res = await fetch(`${BACKEND_URL}/job-posts/business`,
         {
-            headers: { Authorization: `Bearer ${accessToken}` }
-        }
+            headers: { Authorization: `Bearer ${accessToken}` },
+            next: { tags: ['business-job-posts'] }
+        },
+
     )
-    const data = await res.json()
-    return data
+    return await res.json()
+
 }
 
 export const getJob = async (id: number) => {
     const res = await fetch(`${BACKEND_URL}/job-posts/${id}`)
     const data = await res.json()
     return data
+}
+
+export const getSingleJobPostForBusiness = async (id: number) => {
+    const session = await getSession()
+    const res = await fetch(`${BACKEND_URL}/job-posts/${id}`, {
+        headers: {
+            Authorization: `Bearer ${session?.accessToken}`
+        }
+    })
+    return await res.json()
 }
 
 export const getAllEducation = async (userId: number) => {

@@ -29,21 +29,21 @@ declare global {
   }
 
   interface JobPost {
-    id: number;
+    id?: number;
     title: string;
     description: string;
     requirements: string[];
     location: string[];
-    createdAt: string;
+    createdAt?: string;
     startDate: string;
     endDate: string;
     jobType: string;
     paymentAmount: number;
     category: string;
-    available: boolean;
-    status: string;
-    business: Business;
-    applications: Application[];
+    available?: boolean;
+    status?: string;
+    business?: Business;
+    applications?: Application[];
   }
 
   interface Application {

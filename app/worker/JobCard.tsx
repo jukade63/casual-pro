@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { formatDateTimeRange } from "@/lib/formatDateTimeRange";
+import { formatDateTimeRange } from "@/lib/functions.ts/formatDateTimeRange";
 import { cn } from "@/lib/utils";
 import { Building2 } from "lucide-react";
 import Link from "next/link";

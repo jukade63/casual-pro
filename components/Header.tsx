@@ -7,8 +7,8 @@ const subheadline = "Customizable Solutions for Every Business – Casual Jobs, 
 
 const Header = () => {
   return (
-    <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between py-8  max-w-5xl h-[calc(100vh-220px)]">
-      <div className="w-1/2 pr-8">
+    <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between py-8  max-w-5xl md:h-[calc(100vh-220px)]">
+      <div className="md:w-1/2 pr-8">
         <h1 className="text-4xl font-bold mb-2">{headline}</h1>
         <p className="text-gray-600">{subheadline}</p>
       </div>
@@ -16,7 +16,7 @@ const Header = () => {
       <div className="w-1/2">
         <div className="w-full h-auto">
           <Image
-            className="object-cover rounded-md"
+            className="object-cover rounded-md hidden md:block"
             src={imageSrc}
             alt="header-img"
           />

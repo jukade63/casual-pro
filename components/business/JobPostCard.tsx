@@ -1,6 +1,6 @@
 import React from "react";
 import { Mail, Phone } from "lucide-react";
-import { formatDateTimeRange } from "@/lib/formatDateTimeRange";
+import { formatDateTimeRange } from "@/lib/functions.ts/formatDateTimeRange";
 import { Button } from "../ui/button";
 import Link from "next/link";
 
@@ -9,7 +9,14 @@ interface JobPostProps {
 }
 
 const JobPostCard: React.FC<JobPostProps> = ({ jobPost }) => {
-  const { title, description, applications } = jobPost;
+  const { title, description, applications, status } = jobPost;
+
+  const statusColor =
+    status === "pending"
+      ? "text-orange-500"
+      : status === "approved"
+      ? "text-green-500"
+      : "text-red-500";
 
   return (
     <div className="bg-slate-200 shadow-sm p-4 rounded-mg space-y-2">
@@ -23,10 +30,13 @@ const JobPostCard: React.FC<JobPostProps> = ({ jobPost }) => {
       <p className="text-gray-600 text-sm bg-rose-200 p-2 inline-block rounded-md">
         {formatDateTimeRange(jobPost.startDate, jobPost.endDate)}
       </p>
-      {applications.length > 0 ? (
+      <p className="font-semibold">
+        Status : <span className={statusColor}>{status}</span>
+      </p>
+      {applications && applications.length > 0 ? (
         <ol className="space-y-2">
           <h2 className="text-md font-semibold mb-2">Applicants</h2>
-          {applications.map((application, index) => (
+          {applications?.map((application, index) => (
             <li
               key={index}
               className="flex flex-col md:flex-row justify-between bg-slate-200 p-2  border-b border-gray-400"
@@ -41,30 +51,21 @@ const JobPostCard: React.FC<JobPostProps> = ({ jobPost }) => {
                   <Mail color="gray" size={20} />
                   <span>{application.worker.user.email}</span>
                 </p>
-                <p className="text-gray-700 mb-2 flex items-center gap-2 pl-3">
-                  <Phone color="gray" size={20} />
-                  <span>{application.worker.user.phoneNumber}</span>
-                </p>
+                {application.worker.user.phoneNumber && (
+                  <p className="text-gray-700 mb-2 flex items-center gap-2 pl-3">
+                    <Phone color="gray" size={20} />
+                    <span>{application.worker.user.phoneNumber}</span>
+                  </p>
+                )}
                 {application.worker.availableFrom &&
                   application.worker.availableTo && (
-                    <div className="space-x-4 text-gray-400">
+                    <div className="space-x-4 text-sm">
                       <span>Available from</span>
                       <span>
-                        {
-                          formatDateTimeRange(
-                            application.worker.availableFrom,
-                            application.worker.availableTo
-                          )[0]
-                        }
-                      </span>
-                      <span>to</span>
-                      <span>
-                        {
-                          formatDateTimeRange(
-                            application.worker.availableFrom,
-                            application.worker.availableTo
-                          )[1]
-                        }
+                        {formatDateTimeRange(
+                          application.worker.availableFrom,
+                          application.worker.availableTo
+                        ).slice(0, -5)}
                       </span>
                     </div>
                   )}
@@ -74,11 +75,13 @@ const JobPostCard: React.FC<JobPostProps> = ({ jobPost }) => {
                 )}
               </div>
               {application.status === "pending" && (
-                <div className="flex items-center mb-2 gap-2 self-end">
-                  <Button className="px-3 py-1">Accept</Button>
-                  <Button className="px-3 py-1" variant="destructive">
+                <div className="flex items-center m-2 gap-2 self-end ">
+                  <button className="px-2 rounded-sm py-1 text-sm bg-sky-700 text-white">
+                    Accept
+                  </button>
+                  <button className="px-2 rounded-sm py-1 text-sm bg-rose-700 text-white">
                     Decline
-                  </Button>
+                  </button>
                 </div>
               )}
             </li>

@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "./job/Header";
 import JobPostDetail from "./job/JobPostDetail";
-import { getJob } from "@/lib/apiCalls/fetchers";
+import { getJob } from "@/lib/apiRequests/fetchers";
 
 
 export default async function SingleJobPost({id} : {id: string}) {

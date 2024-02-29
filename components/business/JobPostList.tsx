@@ -1,13 +1,16 @@
-import { getJobPostsByBusiness } from "@/lib/apiCalls/fetchers";
-import { revalidatePath } from "next/cache";
+import { getJobPostsByBusiness } from "@/lib/apiRequests/fetchers";
+import { revalidatePath, revalidateTag, unstable_noStore } from "next/cache";
 import React from "react";
 import JobPostCard from "./JobPostCard";
-import Link from "next/link";
 
 export default async function JobPostList() {
-  revalidatePath("/business/job-posts");
-  const jobPosts: JobPost[] = (await getJobPostsByBusiness()) || [];
-  console.log(jobPosts);
+  let jobPosts: JobPost[] = (await getJobPostsByBusiness()) || [];
+
+  jobPosts = jobPosts.sort((a, b) => {
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
+    return dateB.getTime() - dateA.getTime();
+  });
 
   return (
     <div>

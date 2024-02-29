@@ -15,9 +15,12 @@ export const jobPostSchema = z.object({
       })
     ),
     location: z.array(z.string().min(1, { message: "This field is required" })),
-    startDate: z.string().min(1, { message: "Start date is required" }),
-    endDate: z.string().min(1, { message: "End date is required" }),
+    startDate: z.date().min(new Date(), { message: "Date must be in the future" }),
+    endDate: z.date().min(new Date(), { message: "Date must be in the future" }),
     jobType: z.nativeEnum(JobType),
     paymentAmount: z.string().min(1,  { message: "Payment amount is required" }),
     category: z.string().min(1, { message: "Category is required" }),
+    status: z.string().optional(),
+    startTime: z.string(),
+    endTime: z.string(),
   });
