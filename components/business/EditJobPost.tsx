@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { z } from "zod";
 import { JobType } from "./JobPostForm";
 import { useFieldArray, useForm } from "react-hook-form";
-import { jobPostSchema } from "@/lib/schemas/jobPostSchema";
+import { jobPostSchema } from "@/lib/schemas/job-post-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -34,7 +34,7 @@ import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
 import { generateTimeOptions } from "@/lib/functions.ts/genetateTimeOptions";
 import { concatDateTime } from "@/lib/functions.ts/concatDateTime";
-import { updateJobPost } from "@/lib/apiRequests/updateJobPost";
+import { updateJobPost } from "@/lib/api-requests/update-job-post";
 import { useRouter } from "next/navigation";
 
 export default function EditJobPost({ jobPost }: { jobPost: JobPost }) {
@@ -61,7 +61,6 @@ export default function EditJobPost({ jobPost }: { jobPost: JobPost }) {
 
   const {
     control,
-    getValues,
     formState: { isDirty },
   } = form;
 
@@ -77,9 +76,6 @@ export default function EditJobPost({ jobPost }: { jobPost: JobPost }) {
     const startDateWithTime = concatDateTime(values.startDate, values.startTime);
     const endDateWithTime = concatDateTime(values.endDate, values.endTime);
 
-    console.log(startDateWithTime, endDateWithTime);
-    
-
     const sanitizedValues = {
       ...values,
       startDate: startDateWithTime,
@@ -87,13 +83,11 @@ export default function EditJobPost({ jobPost }: { jobPost: JobPost }) {
       requirements: values.requirements.map((item) => item.requirement),
       paymentAmount: +values.paymentAmount,
     };
-    console.log(sanitizedValues);
     
     try {
-      const data = await updateJobPost(+jobPost.id!, sanitizedValues);
-      console.log(data);
+      await updateJobPost(+jobPost.id!, sanitizedValues);
       
-      // router.push("/business/job-posts");
+      router.push("/business/job-posts");
     } catch (error) {
       setError("An unexpected error occurred. Please try again later.");
       console.log(error);

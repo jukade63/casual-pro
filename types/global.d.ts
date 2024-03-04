@@ -34,7 +34,7 @@ declare global {
     description: string;
     requirements: string[];
     location: string[];
-    createdAt?: string;
+    createdAt?: Date | null;
     startDate: string;
     endDate: string;
     jobType: string;
@@ -62,8 +62,24 @@ declare global {
     degree: string;
     major: string;
     gradDate: string;
-
   }
+
+  interface Experience {
+    id?: number;
+    position: string;
+    company: string;
+    startDate: Date;
+    endDate: Date;
+    worker: Worker;
+}
+interface Skill {
+  id?: number;
+  skillName: string;
+  skillLevel?: string | null;
+  certification?: string | null;
+  certLink?:  Url | null;
+  worker: Worker;
+}
 
   interface Session {
     user: {

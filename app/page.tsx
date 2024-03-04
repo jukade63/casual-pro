@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default async function Home() {
-  // const session = await getSession()
-  // if (!session) return null
+
   return (
     <div>
       <nav className="hidden md:block">

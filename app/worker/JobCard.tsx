@@ -9,10 +9,10 @@ export default function JobCard({ job }: { job: JobPost }) {
   return (
     <Card
       key={job.id}
-      className="mb-4 mx-auto p-3 flex gap-2 max-w-[800px] shadow-sm relative"
+      className="mb-4 mx-auto p-3 flex gap-2 shadow-sm relative"
     >
       <div className="hidden md:flex flex-col justify-center itemes-center border-r border-gray-300">
-        <div className="min-w-[200px]">{job.business.user.username}</div>
+        <div className="min-w-[200px]">{job?.business?.user.username}</div>
         {/* <div>{job.business.user.imgUrl}</div> */}
       </div>
 
@@ -61,7 +61,7 @@ export default function JobCard({ job }: { job: JobPost }) {
         </div>
       </div>
       <Link
-        href={`/jobs/${job.id}`}
+        href={`/find-jobs/jobs/${job.id}`}
         className="absolute bottom-2 right-2 font-semibold text-xs text-blue-700 p-2 rounded-md border border-gray-300 bg 
     bg-gray-100 hover:bg-gray-200 cursor-pointer transition-colors duration-200"
       >

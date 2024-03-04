@@ -25,26 +25,33 @@ export class JobPostsController {
   findAll(
     @Query('location') location: string,
     @Query('category') category: string,
-    @Query('jobType') jobType: JobType
+    @Query('jobType') jobType: JobType,
+    @Query('limit') limit: number,
+    @Query('start') start: number
     ) {
-    return this.jobPostsService.findAll(location, category, jobType);
+    return this.jobPostsService.findAll(location, category, jobType, limit, start);
   }
 
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
   @Role(UserType.Business)
-  @Get('business')
-  findAllByBusiness(@Request() req) {
-    console.log(req.user);
-    
+  @Get('business/all')
+  findAllByBusiness(@Request() req) {    
     return this.jobPostsService.findAllByBusiness(req);
   }
- 
-
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.jobPostsService.findOne(id);
+  findOne(@Param('id', ParseIntPipe) id: number) {   
+     
+    return this.jobPostsService.fineOne(id);
+  }
+
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
+  @Role(UserType.Business)
+  @Get('business/:id')
+  findOneByBusiness(@Param('id', ParseIntPipe) id: number) {
+    return this.jobPostsService.findOneByBusiness(id);
   }
 
   @UseGuards(RoleGuard)

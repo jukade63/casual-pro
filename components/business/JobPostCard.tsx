@@ -1,7 +1,6 @@
 import React from "react";
 import { Mail, Phone } from "lucide-react";
 import { formatDateTimeRange } from "@/lib/functions.ts/formatDateTimeRange";
-import { Button } from "../ui/button";
 import Link from "next/link";
 
 interface JobPostProps {
@@ -42,26 +41,31 @@ const JobPostCard: React.FC<JobPostProps> = ({ jobPost }) => {
               className="flex flex-col md:flex-row justify-between bg-slate-200 p-2  border-b border-gray-400"
             >
               <div>
-                <p className="text-gray-700">
-                  <span className="font-semibold">
-                    {index + 1}. {application.worker.user.username}
+                <span className="text-sm">{index + 1}.</span>
+                
+                <Link
+                  href={`/business/applicants/${application.worker.id}`}
+                  className="text-gray-700 hover:underline hover:underline-offset-2"
+                >
+                  <span className="font-semibold text-sm ml-2">
+                    {application.worker.user.username}
                   </span>
-                </p>
+                </Link>
                 <p className="text-gray-700 mb-2 flex items-center gap-2 pl-3">
-                  <Mail color="gray" size={20} />
-                  <span>{application.worker.user.email}</span>
+                  <Mail color="gray" size={15} />
+                  <span className="text-sm">{application.worker.user.email}</span>
                 </p>
                 {application.worker.user.phoneNumber && (
-                  <p className="text-gray-700 mb-2 flex items-center gap-2 pl-3">
+                  <p className="text-gray-700 mb-2 flex text-sm items-center gap-2 pl-3">
                     <Phone color="gray" size={20} />
                     <span>{application.worker.user.phoneNumber}</span>
                   </p>
                 )}
                 {application.worker.availableFrom &&
                   application.worker.availableTo && (
-                    <div className="space-x-4 text-sm">
-                      <span>Available from</span>
-                      <span>
+                    <div className="space-x-4">
+                      <span className="text-sm">Available from</span>
+                      <span className="text-sm">
                         {formatDateTimeRange(
                           application.worker.availableFrom,
                           application.worker.availableTo
@@ -69,7 +73,6 @@ const JobPostCard: React.FC<JobPostProps> = ({ jobPost }) => {
                       </span>
                     </div>
                   )}
-
                 {application.status === "accepted" && (
                   <p className="text-green-500">Accepted</p>
                 )}

@@ -21,12 +21,15 @@ export class Worker extends AbstractEntity<Worker> {
   user: User;
 
   @OneToMany(() => Experience, (experience) => experience.worker)
+  @JoinColumn()
   experiences: Experience[];
   
   @OneToMany(() => Skills, (skills) => skills.worker)
+  @JoinColumn()
   skills: Skills[];
   
   @OneToMany(() => Education, (education) => education.worker)
+  @JoinColumn()
   education: Education[];
   
   @OneToMany(() => Applications, (application) => application.worker)

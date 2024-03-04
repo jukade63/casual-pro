@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe } from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
@@ -9,14 +9,16 @@ import { AuthGuard } from 'src/users/user.guard';
 
 @Controller('applications')
 export class ApplicationsController {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(private readonly applicationsService: ApplicationsService) { }
 
-  @Post()
+  @Post(':jobPostId')
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
   @Role(UserType.Worker)
-  create(@Request() req, @Body() createApplicationDto: CreateApplicationDto) {
-    return this.applicationsService.create(req, createApplicationDto);
+  create(@Request() req,
+    @Param('jobPostId', ParseIntPipe) jobPostId: number
+    ) {
+    return this.applicationsService.create(req, jobPostId);
   }
 
   @Get()

@@ -3,7 +3,7 @@ import { CreateJobPostDto } from './dto/create-job_post.dto';
 import { UpdateJobPostDto } from './dto/update-job_post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JobPost, JobType } from './entities/job_post.entity';
+import { JobPost, JobType, Status } from './entities/job_post.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
 import { User } from 'src/users/entities/user.entity';
 import { application } from 'express';
@@ -41,13 +41,10 @@ export class JobPostsService {
     return savedJobPost
   }
 
-  async findAll(location?: string, category?: string, jobType?: JobType) {
+  async findAll(location?: string, category?: string, jobType?: JobType, limit?: number, start?: number) {
 
-    let query = this.jobPostRepository.createQueryBuilder('job_post');
-
-    query = query.leftJoinAndSelect('job_post.business', 'business').leftJoinAndSelect('business.user', 'user');
-
-    query = query.select(['job_post', 'business', 'user.username', 'user.phoneNumber', 'user.email']);
+    let query = this.jobPostRepository.createQueryBuilder('job_post')
+      .where('job_post.status = :status', { status: Status.Approved });
 
     if (location) {
       query = query.andWhere('EXISTS (SELECT 1 FROM UNNEST(job_post.location) AS loc WHERE loc ILIKE :location)', { location: `%${location}%` });
@@ -59,39 +56,63 @@ export class JobPostsService {
       query = query.andWhere('job_post.jobType = :jobType', { jobType: jobType });
     }
 
+    query = query.leftJoinAndSelect('job_post.business', 'business')
+      .leftJoinAndSelect('business.user', 'user')
+      .select(['job_post', 'business', 'user.username', 'user.phoneNumber', 'user.email'])
+      .orderBy('job_post.createdAt', 'DESC');
+
+    if (start !== undefined && limit !== undefined) {
+      query = query.skip(start).take(limit);
+    }
+
     return query.getMany();
   }
 
+  async fineOne(id: number) {
+    try {
+      const jobPost = await this.jobPostRepository.findOne({
+        where: { id },
+        relations: ['business', 'business.user']
+      })
+      if (!jobPost) throw new NotFoundException('job post not found')
+      return jobPost
+    } catch (error) {
 
-  async findOne(id: number) {
+    }
+  }
+
+  async findOneByBusiness(id: number) {
     const jobPost = await this.jobPostRepository
-    .createQueryBuilder('job_post')
-    .where('job_post.id = :id', { id })
-    .leftJoinAndSelect('job_post.applications', 'applications')
-    .leftJoinAndSelect('applications.worker', 'worker')
-    .leftJoinAndSelect('worker.user', 'user')
-    .leftJoinAndSelect('worker.education', 'education')
-    .leftJoinAndSelect('worker.experiences', 'experiences')
-    .leftJoinAndSelect('worker.skills', 'skills')
-    .getOne();
+      .createQueryBuilder('job_post')
+      .where('job_post.id = :id', { id })
+      .leftJoinAndSelect('job_post.applications', 'applications')
+      .leftJoinAndSelect('applications.worker', 'worker')
+      .leftJoinAndSelect('worker.user', 'user')
+      .leftJoinAndSelect('worker.education', 'education')
+      .leftJoinAndSelect('worker.experiences', 'experiences')
+      .leftJoinAndSelect('worker.skills', 'skills')
+      .getOne();
 
-  return jobPost;
+    return jobPost;
   }
 
   async findAllByBusiness(req) {
 
+    console.log(req.user);
+    
     try {
       const { sub: userId } = req.user;
-  
+
+
       const user = await this.userRepository.findOne({
         where: { id: userId },
         relations: ['business'],
       });
-  
+
       if (!user) {
         throw new NotFoundException('Business not found');
       }
-  
+
       const jobPosts = await this.jobPostRepository
         .createQueryBuilder('job_post')
         .where('job_post.businessId = :businessId', {
@@ -104,7 +125,7 @@ export class JobPostsService {
         .leftJoinAndSelect('worker.experiences', 'experiences')
         .leftJoinAndSelect('worker.skills', 'skills')
         .getMany();
-  
+
       return jobPosts;
     } catch (error) {
       throw new Error(`Error fetching job posts by business: ${error.message}`);
@@ -117,7 +138,7 @@ export class JobPostsService {
       return new NotFoundException('job post not found')
     }
     return await this.jobPostRepository.save({ ...jobPost, ...updateJobPostDto });
-    
+
   }
 
   remove(id: number) {

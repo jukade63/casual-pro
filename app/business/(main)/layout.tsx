@@ -1,6 +1,6 @@
 import BasicInfo from "@/components/BasicInfo";
 import { ActionTabs } from "@/components/business/Actiontabs";
-import { getSession } from "@/lib/apiRequests/fetchers";
+import { getSession } from "@/lib/api-requests/fetchers";
 
 export default async function layout({
   children,

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { WorkersService } from './workers.service';
 import { CreateWorkerDto } from './dto/create-worker.dto';
 import { UpdateWorkerDto } from './dto/update-worker.dto';
@@ -18,8 +18,8 @@ export class WorkersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.workersService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.workersService.findOne(id);
   }
 
   @Patch(':id')

@@ -13,7 +13,7 @@ export async function createJobPost(data: any){
             Authorization: `Bearer ${session?.accessToken}`,
           },
           body: JSON.stringify(data),
-        });
+        })
         revalidateTag('business-job-posts')
     } catch(error) {
         console.log(error);

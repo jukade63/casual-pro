@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 
 import {
@@ -8,43 +7,28 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { Search } from "lucide-react";
-import { BACKEND_URL } from "@/lib/constants";
-import { useJobPost } from "@/hooks/useJobPost";
-import { Dispatch, SetStateAction } from "react";
+import { useRouter } from "next/navigation";
 
-interface Props {
-  setIsFound: Dispatch<SetStateAction<boolean>>;
-}
-
-const JobSearch = ({ setIsFound }: Props) => {
-  const [category, setCategory] = useState("");
-  const [location, setLocation] = useState("");
-  const [jobType, setJobType] = useState("");
-  const { setJobPosts } = useJobPost();
+const JobSearch = () => {
+  const router = useRouter();
+  const [query, setQuery] = useState({
+    page: 1,
+    limit: 5,
+    location: "",
+    category: "",
+    jobType: "",
+  });
+  
 
   const handleSearch = async () => {
-    try {
-      const response = await fetch(
-        `${BACKEND_URL}/job-posts?${new URLSearchParams({
-          category,
-          location,
-          jobType,
-        })}`,
-        { next: { tags: ["all-jobs"] } }
-      );
-      const data = await response.json();
-      setJobPosts(data);
-      if (data.length === 0) {
-        setIsFound(false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+
+    router.push(`/find-jobs/?${new URLSearchParams({...query, page: "1", limit: "5"})}`);
+    setQuery({ location: "", category: "", jobType: "", page: 1, limit: 5 });
+   
   };
 
   return (
@@ -52,8 +36,8 @@ const JobSearch = ({ setIsFound }: Props) => {
       <input
         type="text"
         id="category"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        value={query.category}
+        onChange={(e) => setQuery({ ...query, category: e.target.value })}
         className="w-full md:w-[120px] bg-gray-200 p-2 focus:outline-none rounded-md caret-blue-600
         placeholder:text-sm "
         placeholder="Category"
@@ -61,13 +45,13 @@ const JobSearch = ({ setIsFound }: Props) => {
       <input
         type="text"
         id="location"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
+        value={query.location}
+        onChange={(e) => setQuery({ ...query, location: e.target.value })}
         className="w-full md:w-[120px] bg-gray-200 p-2 focus:outline-none rounded-md caret-blue-600
         placeholder:text-sm"
         placeholder="Location"
       />
-      <Select onValueChange={setJobType}>
+      <Select onValueChange={(e) => setQuery({ ...query, jobType: e })}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select a job type" />
         </SelectTrigger>

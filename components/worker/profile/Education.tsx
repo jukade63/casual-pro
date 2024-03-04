@@ -1,6 +1,6 @@
 "use client";
 import { useModal } from "@/hooks/useModalStore";
-import { getAllEducation } from "@/lib/apiRequests/fetchers";
+import { getAllEducation } from "@/lib/api-requests/fetchers";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import EducationRow from "../EducationRow";

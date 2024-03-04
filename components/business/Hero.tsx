@@ -23,7 +23,7 @@ export default function Hero() {
           </p>
 
           <div className="mt-8 flex flex-col md:flex-row gap-2 text-center">
-            <Link href="#" className="block flex-basis-1">
+            <Link href="/business/sign-up" className="block flex-basis-1">
               <Button className="px-10 w-full">Get Started</Button>
             </Link>
 

@@ -1,4 +1,4 @@
-import { Injectable, UseGuards } from '@nestjs/common';
+import { ConflictException, Injectable, UseGuards } from '@nestjs/common';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Repository } from 'typeorm';
@@ -23,11 +23,9 @@ export class ApplicationsService {
 
   ) { }
 
-  async create(req, createApplicationDto: CreateApplicationDto) {
+  async create(req, jobPostId: number) {
 
     const { sub } = req.user
-
-    const { jobPostId } = createApplicationDto
 
     const user = await this.userRepository.findOneBy({ id: sub })
 
@@ -42,6 +40,17 @@ export class ApplicationsService {
     if (!jobPost) {
       throw new Error(`Job post with id ${jobPostId} not found`)
     }
+
+    const existingApplication = await this.applicationsRepository.findOne({ 
+      where: { 
+          worker: { id: worker.id }, 
+          jobPost: { id: jobPostId } 
+      } 
+  });
+
+  if (existingApplication) {
+      throw new ConflictException(`Duplicate application`);
+  }
 
     const application = this.applicationsRepository.create({
       worker,

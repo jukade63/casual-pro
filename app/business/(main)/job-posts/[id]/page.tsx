@@ -1,10 +1,10 @@
 import EditJobPost from "@/components/business/EditJobPost";
-import { getSingleJobPostForBusiness } from "@/lib/apiRequests/fetchers";
+import { getJobPostByIdByBusiness} from "@/lib/api-requests/fetchers";
 
 export default async function page({ params }: { params: { id: string } }) {
   let jobPost
   if(params.id){
-    jobPost = await getSingleJobPostForBusiness(+params.id);
+    jobPost = await getJobPostByIdByBusiness(+params.id);
   }
 
   return (

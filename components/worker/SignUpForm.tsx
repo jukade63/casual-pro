@@ -1,6 +1,5 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -15,72 +14,47 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { BACKEND_URL } from "@/lib/constants";
-import { useState } from "react";
+import React, { useState, useTransition } from "react";
+import { SignupSchema } from "@/lib/schemas/signup-schema";
+import { useFormState } from "react-dom";
+import { signUpWorkerAction } from "@/lib/api-requests/create-user";
 
-const formSchema = z
-  .object({
-    username: z
-      .string()
-      .min(3, { message: "Username must be at least 3 characters." }),
-    email: z
-      .string()
-      .min(1, { message: "Email is required" })
-      .email({ message: "Please enter a valid email address." }),
-    password: z
-      .string()
-      .min(3, { message: "Password must be at least 8 characters." }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.confirmPassword === data.password, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+export type FormFields = z.infer<typeof SignupSchema>;
 
 export function SignUpForm() {
-  const [error, setError] = useState("");
-  const [consentChecked, setConsentChecked] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  // const [state, formAction] = useFormState(signUpWorkerAction, {
+  //   message: "",
+  // });
+  const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [consentChecked, setConsentChecked] = useState(false);
+
+  const form = useForm<z.output<typeof SignupSchema>>({
+    resolver: zodResolver(SignupSchema),
     defaultValues: {
       username: "",
       email: "",
       password: "",
       confirmPassword: "",
+      userType: "worker",
     },
   });
 
-  const validForm = form.formState.isValid;
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const response = await fetch(BACKEND_URL + "/users/worker", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...values,
-          userType: "worker",
-        }),
+  const onSubmit = async (values: FormFields) => {
+    startTransition(() => {
+      signUpWorkerAction(values).then((res) => {
+        if (res && res.hasError) {
+          alert(res.message);
+        }
       });
-      if (response.ok) {
-        router.push("/worker/sign-in");
-      }
-    } catch (error) {
-      setError("Sign-up failed. try again");
-    } finally {
-      form.reset();
-      setLoading(false);
-    }
-  }
-
+    });
+  };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 min-w-[320px]">
+      <form
+        onSubmit={form.handleSubmit((values) => onSubmit(values))}
+        className="space-y-4 min-w-[320px]"
+      >
         <FormField
           control={form.control}
           name="username"
@@ -136,12 +110,6 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        {error && (
-          <p className="text-red-500 text-xs bg-red-200 p-2 rounded-sm mb-2">
-            {error}
-          </p>
-        )}
-
         <FormItem>
           <div className="flex items-center gap-1">
             <Input
@@ -156,11 +124,14 @@ export function SignUpForm() {
             </label>
           </div>
         </FormItem>
+        {/* {state.hasError && state.message && (
+          <p className="text-red-500 text-xs bg-red-200 p-2 rounded-sm mb-2">
+            {state.message}
+          </p>
+        )} */}
 
         <div className="flex justify-center">
-          <Button type="submit" disabled={!validForm || loading || !consentChecked}>
-            Sign Up
-          </Button>
+          <Button disabled={!consentChecked || isPending }>{isPending ? "Signing-up..." : "Sign Up"}</Button>
         </div>
 
         <div className="text-center">

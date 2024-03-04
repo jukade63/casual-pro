@@ -1,5 +1,5 @@
 "use server"
-import { getAllEducation, getSession } from "@/lib/apiRequests/fetchers";
+import { getAllEducation, getSession } from "@/lib/api-requests/fetchers";
 import { revalidateTag } from "next/cache";
 import EducationRow from "../EducationRow";
 

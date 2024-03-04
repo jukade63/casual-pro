@@ -30,16 +30,16 @@ function Navbar() {
           />
         </Link>
         <Link
-          href="/worker"
+          href="/find-jobs"
           className={cn(
             "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
-            pathname === "/worker" ? currentPathClass : ""
+            pathname === "/find-jobs" ? currentPathClass : ""
           )}
         >
           Find jobs
         </Link>
         <Link
-          href="/business"
+          href="/find-workers"
           className={cn(
             "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
             pathname === "/business" ? currentPathClass : ""
@@ -48,7 +48,7 @@ function Navbar() {
           Find workers
         </Link>
         <Link
-          href="/business/#how-it-works"
+          href="/find-workers/#how-it-works"
           className={cn(
             "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
             pathname === "/how-it-works" ? currentPathClass : ""
@@ -59,7 +59,7 @@ function Navbar() {
         <div className="ml-auto flex gap-4 items-center">
           {session && (
             <div className="flex flex-col items-center">
-              <span className="text-gray-800 text-xs rounded-sm bg-slate-200 px-2 py-1">
+              <span className="text-gray-800 text-xs rounded-sm bg-amber-200 px-2 py-1">
                 Logged in as
               </span>
               <span className="capitalize">{session?.user?.username}</span>

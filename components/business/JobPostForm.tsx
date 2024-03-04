@@ -18,14 +18,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { CalendarIcon, MinusCircle, Plus } from "lucide-react";
 import { Textarea } from "../ui/textarea";
-import { jobPostSchema } from "@/lib/schemas/jobPostSchema";
+import { jobPostSchema } from "@/lib/schemas/job-post-schema";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
-import { createJobPost } from "@/lib/apiRequests/createJobPost";
+import { createJobPost } from "@/lib/api-requests/create-jop-post";
 import { generateTimeOptions } from "@/lib/functions.ts/genetateTimeOptions";
 import {
   Select,

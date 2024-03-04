@@ -14,13 +14,15 @@ export default function BasicInfo() {
   return (
     <div className="flex gap-4 items-center justify-evenly bg-orange-400 text-white p-5 max-w-3xl rounded-md">
       <div className="flex gap-4 items-center">
-        <Image
-          src={imgSrc}
-          alt="profile"
-          width={100}
-          height={100}
-          className="rounded-full"
-        />
+        <div className="relative w-20 h-20">
+          <Image
+            src={imgSrc}
+            alt="profile"
+            layout="fill"
+            objectFit="cover"
+            className="rounded-full"
+          />
+        </div>
         <div className="flex flex-col gap-2">
           <h2 className="font-semibold text-gray-700">
             {session?.user?.username || ""}
