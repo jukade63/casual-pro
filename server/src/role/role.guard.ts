@@ -16,6 +16,7 @@ export class RoleGuard implements CanActivate {
         
         if(request.user){
             const user = await this.usersService.findOne(request.user.sub);
+            
             return user.userType === role
         }
         return false

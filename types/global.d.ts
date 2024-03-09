@@ -28,6 +28,14 @@ declare global {
 
   }
 
+  interface Job {
+    id: number;
+    completed: boolean;
+    isFavorite: boolean;
+    jobPost: JobPost;
+    ratings?: Rating[];
+  }
+
   interface JobPost {
     id?: number;
     title: string;
@@ -42,18 +50,17 @@ declare global {
     category: string;
     available?: boolean;
     status?: string;
-    business?: Business;
+    business: Business;
     applications?: Application[];
   }
 
   interface Application {
     id: number;
-    worker: Worker;
-    jobPost: JobPost;
+    worker?: Worker;
     status: string;
-    createdAt: string;
-
-
+    appliedAt: string;
+    business?: Business;
+    jobPost: JobPost;
   }
 
   interface Education {

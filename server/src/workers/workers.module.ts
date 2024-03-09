@@ -12,5 +12,6 @@ import { Worker } from './entities/worker.entity';
   imports: [TypeOrmModule.forFeature([Worker, Experience, Skills, Education])],
   controllers: [WorkersController],
   providers: [WorkersService],
+  exports: [WorkersService]
 })
 export class WorkersModule {}

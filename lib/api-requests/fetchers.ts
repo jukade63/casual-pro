@@ -16,7 +16,6 @@ const fetchWithSessionAndRedirect = async (url: string, options: RequestInit) =>
     }
     const res = await fetch(url, { ...options, headers: { Authorization: `Bearer ${session?.accessToken}` } });
     if (!res.ok) {
-        console.log(res.statusText)
         if (res.status === 403) {
             redirect('/sign-in');
         } else {
@@ -36,10 +35,10 @@ export const getAllJobs = async (page: number, limit: number, location?: string,
     if (category) params.append('category', category);
     if (jobType) params.append('jobType', jobType);
 
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
     try {
-        const res = await fetch(`${BACKEND_URL}/job-posts?${params.toString()}`, {cache: 'no-store', next: { tags: ['jobs'] } })
+        const res = await fetch(`${BACKEND_URL}/job-posts?${params.toString()}`, { cache: 'no-store' })
         return await res.json()
     } catch (error) {
         console.log(error)
@@ -53,14 +52,14 @@ export const getJobPostsByBusiness = async () => {
     })
 }
 
-export const getJobById = async (id: number) => {    
+export const getJobPostById = async (id: number) => {
     const res = await fetch(`${BACKEND_URL}/job-posts/${id}`, {
         next: {
             tags: ['jobById']
         }
     })
-    const data = await res.json()
-    return data
+    return await res.json()
+    
 }
 
 export const getJobPostByIdByBusiness = async (id: number) => {
@@ -89,3 +88,25 @@ export const getWorkerById = async (id: number) => {
     })
     return await res.json()
 }
+
+export const getApplicationsByWorker = async () => {
+    const session = await getSession()
+    const res = await fetch(`${BACKEND_URL}/applications/worker/all`, {
+        cache: 'no-store',
+        headers: {
+            Authorization: `Bearer ${session?.accessToken}`
+        },
+    }, )
+    return await res.json()
+}
+
+export const getFavoutiteJobs = async () => {
+    const session = await getSession()
+    const res = await fetch(`${BACKEND_URL}/jobs/favorites`, {
+        headers: {
+            Authorization: `Bearer ${session?.accessToken}`
+        },
+    })
+    return await res.json()
+}
+

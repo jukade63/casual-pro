@@ -1,6 +1,6 @@
-import { SignInForm } from '@/components/worker/SignInForm'
-import Image from 'next/image'
-import React from 'react'
+import { SignInForm } from "@/components/worker/SignInForm";
+import Image from "next/image";
+import React from "react";
 
 function page() {
   return (
@@ -14,7 +14,7 @@ function page() {
       />
       <SignInForm />
     </div>
-  )
+  );
 }
 
-export default page
+export default page;

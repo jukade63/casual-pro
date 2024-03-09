@@ -1,8 +1,12 @@
 import { SignUpForm } from "@/components/worker/SignUpForm";
+import { getSession } from "@/lib/api-requests/fetchers";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import React from "react";
 
-function page() {
+async function page() {
+  const session = await getSession();
+  if(session?.user) redirect("/worker/dashboard")
   return (
     <div className="flex flex-col items-center">
       <Image

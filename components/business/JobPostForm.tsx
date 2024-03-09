@@ -95,8 +95,6 @@ export function JobPostForm() {
       paymentAmount: +values.paymentAmount,
     };
 
-    console.log(sanitizedValues);
-
     try {
       await createJobPost(sanitizedValues);
       router.push("/business/job-posts");
@@ -107,7 +105,7 @@ export function JobPostForm() {
   }
 
   return (
-    <section>
+    <section >
       <h1 className="text-xl font-semibold pt-3 text-center">
         Request a job post
       </h1>

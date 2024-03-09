@@ -26,14 +26,23 @@ export class ApplicationsController {
     return this.applicationsService.findAll();
   }
 
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
+  @Role(UserType.Worker)
+  @Get('worker/all')
+  findAllByWorker(@Request() req) {
+    return this.applicationsService.findAllByWorker(req);
+
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.applicationsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateApplicationDto: UpdateApplicationDto) {
-    return this.applicationsService.update(+id, updateApplicationDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateApplicationDto: UpdateApplicationDto) {
+    return this.applicationsService.update(id, updateApplicationDto);
   }
 
   @Delete(':id')

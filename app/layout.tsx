@@ -3,6 +3,8 @@ import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import ModalProvider from "../providers/ModalProvider";
+import Navbar from "@/components/Navbar";
+import MobileNav from "@/components/worker/MobileNav";
 
 const poppins = Poppins({
   subsets: ["latin"],

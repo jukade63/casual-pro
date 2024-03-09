@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import React from "react";
 
-const WorkHistory: React.FC = () => {
+export default function WorkHistoryPage() {
   const workHistoryData = [
     {
       company: "Tech Innovators",
@@ -61,8 +61,8 @@ const WorkHistory: React.FC = () => {
   ];
 
   return (
-    <div>
-      <h2 className="mt-5">Latest Work</h2>
+    <div className="mt-5">
+      <h2 className="font-semibold">Latest Work</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
         {workHistoryData.map((work, index) => (
           <div key={index} className="mb-4 bg-sky-100 p-4 rounded shadow-sm">
@@ -90,6 +90,4 @@ const WorkHistory: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default WorkHistory;
+}

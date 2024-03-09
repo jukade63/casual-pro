@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -15,49 +15,41 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 import ButtonLoading from "../ButtonLoading";
+import { signInSchema } from "@/lib/schemas/sigin-schema";
 
-const formSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: "Email is required" })
-    .email({ message: "Please enter a valid email address." }),
-  password: z
-    .string()
-    .min(1, { message: "Password must be at least 8 characters." }),
-});
+export type FormFields = z.infer<typeof signInSchema>;
 
 export function SignInForm() {
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FormFields>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);
-    try {
-      const result = await signIn("email-password", {
-        email: values.email,
-        password: values.password,
-        redirect: false,
-      });
-      if (result?.error === "CredentialsSignin") {
-        setError("Invalid email or password. Please try again.");
-      } else {
-        setLoading(false);
-        router.push("/");
+  function onSubmit(values: FormFields) {
+    startTransition(async () => {
+      try {
+        const result = await signIn("email-password", {
+          ...values,
+          redirect: false,
+        });
+        if (result?.error === "CredentialsSignin") {
+          setError("Invalid email or password. Please try again.");
+        } else {
+          router.push("/");
+        }
+      } catch (error) {
+        setError("An unexpected error occurred.");
       }
-    } catch (error) {
-      setError("An unexpected error occurred. Please try again later.");
-      console.error("Sign-in error:", error);
-    }
+    });
   }
 
   return (
@@ -86,7 +78,7 @@ export function SignInForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="********" {...field} />
+                <Input placeholder="********" {...field} type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -94,31 +86,31 @@ export function SignInForm() {
         />
 
         <div className="flex justify-center">
-          {loading ? (
+          {isPending ? (
             <ButtonLoading />
           ) : (
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={isPending}>
               Submit
             </Button>
           )}
         </div>
+        {error && (
+          <p className="text-red-500 text-xs bg-red-200 p-2 rounded-sm mb-2">
+            {error}
+          </p>
+        )}
         <div className="text-center">
-          {error && (
-            <p className="text-red-500 text-xs bg-red-200 p-2 rounded-sm mb-2">
-              {error}
-            </p>
-          )}
           <p className="text-sm">Haven't signed up yet? </p>
           <p
             onClick={() => router.push("/worker/sign-up")}
-            className="text-blue-600 text-sm hover:underline cursor-pointer mt-2"
+            className="text-blue-600 text-sm hover:underline hover:underline-offset-4 cursor-pointer mt-2"
           >
             Sign up as a worker
           </p>
           <p className="text-sm">or</p>
           <p
             onClick={() => router.push("/business/sign-up")}
-            className="text-blue-600 text-sm hover:underline cursor-pointer "
+            className="text-blue-600 text-sm hover:underline hover:underline-offset-4 cursor-pointer "
           >
             Sign up as a business
           </p>

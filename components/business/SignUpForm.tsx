@@ -40,13 +40,15 @@ export function SignUpForm() {
     },
   });
 
-  const onSubmit = async (values: FormFields) => {
-    startTransition(() => {
-      signUpWorkerAction(values).then((res) => {
-        if (res && res.hasError) {
-          alert(res.message);
+  const onSubmit = (values: FormFields) => {
+    startTransition(async () => {
+      try {
+        await signUpWorkerAction(values);
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(error.message);
         }
-      });
+      }
     });
   };
   return (
@@ -130,7 +132,9 @@ export function SignUpForm() {
         )} */}
 
         <div className="flex justify-center">
-          <Button disabled={!consentChecked || isPending }>{isPending ? "Signing-up..." : "Sign Up"}</Button>
+          <Button disabled={!consentChecked || isPending}>
+            {isPending ? "Signing-up..." : "Sign Up"}
+          </Button>
         </div>
 
         <div className="text-center">

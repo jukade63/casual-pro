@@ -9,19 +9,29 @@ export class Jobs extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({nullable: true, default: false})
   completed: boolean;
+
+  @Column({nullable: true, default: false})
+  isFavorite: boolean;
 
   @OneToOne(() => JobPost, (jobPost) => jobPost.job, {onDelete: 'SET NULL'})
   @JoinColumn()
   jobPost: JobPost;
 
-  @ManyToMany(() => Worker, (worker) => worker.jobs, {onDelete: 'SET NULL'})
-  @JoinTable()
-  workers: Worker[]
-
   @OneToMany(() => Ratings, (rating) => rating.job)
   ratings: Ratings[];
 
+  @ManyToMany(() => Worker, (worker) => worker.jobs)
+  @JoinTable()
+  workers: Worker[]
+
+  async addWorker(worker: Worker): Promise<void> {
+    if (!this.workers) {
+      this.workers = [];
+    }
+    this.workers.push(worker);
+    await this.save();
+  }
 }
 

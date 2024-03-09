@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, BeforeIn
 import { Exclude } from 'class-transformer';
 import * as argon from 'argon2';
 import { Business } from 'src/businesses/entities/business.entity';
+import { Worker } from 'src/workers/entities/worker.entity';
 
 export enum UserType {
   Worker = 'worker',
@@ -36,6 +37,10 @@ export class User extends AbstractEntity<User> {
 
   @OneToOne(() => Business, business => business.user)
   business: Business;
+
+  @OneToOne(() => Worker, worker => worker.user)
+  worker: Worker;
+
 
   @BeforeInsert()
   async hashPassword() {

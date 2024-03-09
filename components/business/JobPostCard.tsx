@@ -1,7 +1,9 @@
+"use client";
 import React from "react";
 import { Mail, Phone } from "lucide-react";
 import { formatDateTimeRange } from "@/lib/functions.ts/formatDateTimeRange";
 import Link from "next/link";
+import AcceptOrRejectButton from "./AcceptOrRejectButton";
 
 interface JobPostProps {
   jobPost: JobPost;
@@ -32,7 +34,7 @@ const JobPostCard: React.FC<JobPostProps> = ({ jobPost }) => {
       <p className="font-semibold">
         Status : <span className={statusColor}>{status}</span>
       </p>
-      {applications && applications.length > 0 ? (
+      {applications && applications.length > 0 && (
         <ol className="space-y-2">
           <h2 className="text-md font-semibold mb-2">Applicants</h2>
           {applications?.map((application, index) => (
@@ -42,26 +44,28 @@ const JobPostCard: React.FC<JobPostProps> = ({ jobPost }) => {
             >
               <div>
                 <span className="text-sm">{index + 1}.</span>
-                
+
                 <Link
-                  href={`/business/applicants/${application.worker.id}`}
+                  href={`/business/applicants/${application.worker?.id}`}
                   className="text-gray-700 hover:underline hover:underline-offset-2"
                 >
                   <span className="font-semibold text-sm ml-2">
-                    {application.worker.user.username}
+                    {application.worker?.user?.username}
                   </span>
                 </Link>
-                <p className="text-gray-700 mb-2 flex items-center gap-2 pl-3">
+                {/* <p className="text-gray-700 mb-2 flex items-center gap-2 pl-3">
                   <Mail color="gray" size={15} />
-                  <span className="text-sm">{application.worker.user.email}</span>
-                </p>
-                {application.worker.user.phoneNumber && (
+                  <span className="text-sm">
+                    {application.worker?.user.email}
+                  </span>
+                </p> */}
+                {application.worker?.user.phoneNumber && (
                   <p className="text-gray-700 mb-2 flex text-sm items-center gap-2 pl-3">
                     <Phone color="gray" size={20} />
                     <span>{application.worker.user.phoneNumber}</span>
                   </p>
                 )}
-                {application.worker.availableFrom &&
+                {application.worker?.availableFrom &&
                   application.worker.availableTo && (
                     <div className="space-x-4">
                       <span className="text-sm">Available from</span>
@@ -74,23 +78,25 @@ const JobPostCard: React.FC<JobPostProps> = ({ jobPost }) => {
                     </div>
                   )}
                 {application.status === "accepted" && (
-                  <p className="text-green-500">Accepted</p>
+                  <p className="text-green-500 text-sm">Accepted</p>
+                )}
+                {application.status === "rejected" && (
+                  <p className="text-red-500 text-sm">Rejected</p>
                 )}
               </div>
-              {application.status === "pending" && (
+              {application.status === "applying" && (
                 <div className="flex items-center m-2 gap-2 self-end ">
-                  <button className="px-2 rounded-sm py-1 text-sm bg-sky-700 text-white">
-                    Accept
-                  </button>
-                  <button className="px-2 rounded-sm py-1 text-sm bg-rose-700 text-white">
-                    Decline
-                  </button>
+                  <AcceptOrRejectButton
+                    applicationId={application.id}
+                    jobPostId={jobPost.id}
+                  />
                 </div>
               )}
             </li>
           ))}
         </ol>
-      ) : (
+      )}
+      {applications?.length === 0 && (
         <p className="text-gray-700">No applications yet.</p>
       )}
     </div>

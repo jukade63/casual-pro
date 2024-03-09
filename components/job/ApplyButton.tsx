@@ -1,47 +1,28 @@
 "use client";
-import React from "react";
+import React, { useTransition } from "react";
 import { Button } from "../ui/button";
-import { createApplication } from "@/lib/api-requests/create-application";
-import { useRouter } from "next/navigation";
-import { BACKEND_URL } from "@/lib/constants";
-import { useSession } from "next-auth/react";
+import applyJob from "@/actions/apply-job";
 
 export default function ApplyButton({
   jobPostId,
 }: {
   jobPostId: number | undefined;
 }) {
-  const router = useRouter();
-  const {data: session} = useSession()
+  const [isPending, startTransition] = useTransition();
   const handleApplyJob = async () => {
     if (jobPostId) {
       try {
-       const res  = await fetch(`${BACKEND_URL}/applications/${jobPostId}`, {
-           method: "POST",
-           headers: {
-             "Content-Type": "application/json",
-             Authorization: `Bearer ${session?.accessToken}`,   
-           }
-       })
-       if(res.ok){
-         router.push("/worker/dashboard")
-       }
+        await applyJob(jobPostId);
       } catch (error) {
-        console.log(error);
-        if (
-          error instanceof Error &&
-          error.message === "Only workers can apply for jobs"
-        ) {
-          alert("Only workers can apply for jobs");
-        } else {
-          alert("An unexpected error occurred. Please try again later.");
+        if (error instanceof Error) {
+          alert(error.message);
         }
       }
     }
   };
   return (
-    <Button className="max-w-[200px] mt-auto mb-2" onClick={handleApplyJob}>
-      APPLY FOR THIS JOB
-    </Button>
+    <form action={()=> startTransition(handleApplyJob)}>
+      <Button className="max-w-[200px] mt-auto mb-2" disabled={isPending}>{isPending ? "APPLYING..." : "APPLY FOR THIS JOB"}</Button>
+    </form>
   );
 }

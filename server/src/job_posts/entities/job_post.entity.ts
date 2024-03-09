@@ -64,6 +64,7 @@ export class JobPost extends AbstractEntity<JobPost> {
   applications: Applications[];
 
   @OneToOne(() => Jobs)
+  @JoinColumn()
   job: Jobs
   
 }

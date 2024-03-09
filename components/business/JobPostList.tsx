@@ -1,7 +1,6 @@
 import { getJobPostsByBusiness } from "@/lib/api-requests/fetchers";
 import React from "react";
 import JobPostCard from "./JobPostCard";
-import { redirect } from "next/navigation";
 
 export default async function JobPostList() {
   let jobPosts: JobPost[] = [];
@@ -18,6 +17,7 @@ export default async function JobPostList() {
 
   return (
     <div>
+      <h1 className="text-xl font-semibold text-center my-5">Your post requests</h1>
       {sortedJobPosts.length > 0 &&
         sortedJobPosts.map((jobPost) => (
           <div key={jobPost.id} className="mb-4">

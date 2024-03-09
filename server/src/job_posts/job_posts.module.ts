@@ -8,13 +8,16 @@ import { Jobs } from 'src/jobs/entities/job.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { UsersModule } from 'src/users/users.module';
+import { JobsModule } from 'src/jobs/jobs.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([JobPost, Applications, Jobs, User]),
   JwtModule.register({}),
-  UsersModule
+  UsersModule,
+  JobsModule
   ],
   controllers: [JobPostsController],
   providers: [JobPostsService],
+  exports: [JobPostsService]
 })
 export class JobPostsModule { }

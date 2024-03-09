@@ -39,6 +39,13 @@ export class JobPostsController {
   findAllByBusiness(@Request() req) {    
     return this.jobPostsService.findAllByBusiness(req);
   }
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
+  @Role(UserType.Worker)
+  @Get('worker/all')
+  findAllByWorker(@Request() req) {    
+    return this.jobPostsService.findAllByWorker(req);
+  }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {   

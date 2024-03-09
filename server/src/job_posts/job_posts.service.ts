@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateJobPostDto } from './dto/create-job_post.dto';
-import { UpdateJobPostDto } from './dto/update-job_post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JobPost, JobType, Status } from './entities/job_post.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
 import { User } from 'src/users/entities/user.entity';
 import { application } from 'express';
+import { JobPost, JobType, Status } from './entities/job_post.entity';
+import { CreateJobPostDto } from './dto/create-job_post.dto';
+import { UpdateJobPostDto } from './dto/update-job_post.dto';
+import { JobsService } from 'src/jobs/jobs.service';
 
 
 @Injectable()
@@ -19,7 +20,14 @@ export class JobPostsService {
     private readonly jobRepository: Repository<Jobs>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jobsService: JobsService
   ) { }
+
+  private async getUserById(id: number, relations?: string[]) {
+    const user = await this.userRepository.findOne({ where: { id }, relations })
+    if (!user) throw new NotFoundException('user not found')
+    return user
+  }
   async create(req, createJobPostDto: CreateJobPostDto): Promise<JobPost> {
 
     const { sub } = req.user
@@ -32,34 +40,32 @@ export class JobPostsService {
     const savedJobPost = await this.jobPostRepository.save(jobPost);
 
     const job = this.jobRepository.create({
-      completed: false,
       jobPost: savedJobPost,
-      workers: [],
     })
 
-    await this.jobRepository.save(job)
+    await this.jobsService.create(job)
     return savedJobPost
   }
 
   async findAll(location?: string, category?: string, jobType?: JobType, limit?: number, start?: number) {
 
-    let query = this.jobPostRepository.createQueryBuilder('job_post')
-      .where('job_post.status = :status', { status: Status.Approved });
+    let query = this.jobPostRepository.createQueryBuilder('jobPost')
+      .where('jobPost.status = :status', { status: Status.Approved });
 
     if (location) {
-      query = query.andWhere('EXISTS (SELECT 1 FROM UNNEST(job_post.location) AS loc WHERE loc ILIKE :location)', { location: `%${location}%` });
+      query = query.andWhere('EXISTS (SELECT 1 FROM UNNEST(jobPost.location) AS loc WHERE loc ILIKE :location)', { location: `%${location}%` });
     }
     if (category) {
-      query = query.andWhere('job_post.category ILIKE :category', { category: `%${category}%` });
+      query = query.andWhere('jobPost.category ILIKE :category', { category: `%${category}%` });
     }
     if (jobType) {
-      query = query.andWhere('job_post.jobType = :jobType', { jobType: jobType });
+      query = query.andWhere('jobPost.jobType = :jobType', { jobType: jobType });
     }
 
-    query = query.leftJoinAndSelect('job_post.business', 'business')
+    query = query.leftJoinAndSelect('jobPost.business', 'business')
       .leftJoinAndSelect('business.user', 'user')
-      .select(['job_post', 'business', 'user.username', 'user.phoneNumber', 'user.email'])
-      .orderBy('job_post.createdAt', 'DESC');
+      .select(['jobPost', 'business', 'user.username', 'user.phoneNumber', 'user.email', 'user.imgUrl'])
+      .orderBy('jobPost.createdAt', 'DESC');
 
     if (start !== undefined && limit !== undefined) {
       query = query.skip(start).take(limit);
@@ -69,23 +75,19 @@ export class JobPostsService {
   }
 
   async fineOne(id: number) {
-    try {
-      const jobPost = await this.jobPostRepository.findOne({
-        where: { id },
-        relations: ['business', 'business.user']
-      })
-      if (!jobPost) throw new NotFoundException('job post not found')
-      return jobPost
-    } catch (error) {
-
-    }
+    const jobPost = await this.jobPostRepository.findOne({
+      where: { id },
+      relations: ['business', 'business.user', 'job']
+    })
+    if (!jobPost) throw new NotFoundException('job post not found')
+    return jobPost
   }
 
   async findOneByBusiness(id: number) {
     const jobPost = await this.jobPostRepository
-      .createQueryBuilder('job_post')
-      .where('job_post.id = :id', { id })
-      .leftJoinAndSelect('job_post.applications', 'applications')
+      .createQueryBuilder('jobPost')
+      .where('jobPost.id = :id', { id })
+      .leftJoinAndSelect('jobPost.applications', 'applications')
       .leftJoinAndSelect('applications.worker', 'worker')
       .leftJoinAndSelect('worker.user', 'user')
       .leftJoinAndSelect('worker.education', 'education')
@@ -97,38 +99,34 @@ export class JobPostsService {
   }
 
   async findAllByBusiness(req) {
-
-    console.log(req.user);
-    
     try {
       const { sub: userId } = req.user;
+      const user = await this.getUserById(userId, ['business']);
 
-
-      const user = await this.userRepository.findOne({
-        where: { id: userId },
-        relations: ['business'],
-      });
-
-      if (!user) {
-        throw new NotFoundException('Business not found');
-      }
-
-      const jobPosts = await this.jobPostRepository
-        .createQueryBuilder('job_post')
-        .where('job_post.businessId = :businessId', {
-          businessId: user.business.id,
-        })
-        .leftJoinAndSelect('job_post.applications', 'applications')
-        .leftJoinAndSelect('applications.worker', 'worker')
-        .leftJoinAndSelect('worker.user', 'user')
-        .leftJoinAndSelect('worker.education', 'education')
-        .leftJoinAndSelect('worker.experiences', 'experiences')
-        .leftJoinAndSelect('worker.skills', 'skills')
-        .getMany();
-
-      return jobPosts;
+      return await this.jobPostRepository.find({
+        where: { business: { id: user.business.id } },
+        relations: ['applications', 'job', 'applications.worker.user'],
+      })
     } catch (error) {
       throw new Error(`Error fetching job posts by business: ${error.message}`);
+    }
+  }
+  async findAllByWorker(req) {
+    try {
+      const { sub: userId } = req.user;
+      const user = await this.getUserById(userId);
+
+      return await this.jobPostRepository.find({
+        where: {
+          applications: {
+            worker: { user: { id: user.id } }
+          }
+        },
+        relations: ['job', 'business.user'],
+        select: ['id', 'title', 'paymentAmount', 'startDate', 'endDate'],
+      })
+    } catch (error) {
+      throw new Error(`Error fetching job posts by worker: ${error.message}`);
     }
   }
 
