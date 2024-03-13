@@ -1,13 +1,13 @@
-import { ConflictException, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
-import { CreateApplicationDto } from './dto/create-application.dto';
+import { ConflictException, Injectable, NotFoundException} from '@nestjs/common';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Applications } from './entities/application.entity';
-import { User, UserType } from 'src/users/entities/user.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
 import { JobPost } from 'src/job_posts/entities/job_post.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
+import { User } from 'src/user/entities/user.entity';
+import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class ApplicationsService {
@@ -16,7 +16,7 @@ export class ApplicationsService {
     @InjectRepository(Applications)
     private readonly applicationsRepository: Repository<Applications>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userRepository: UserRepository,
     @InjectRepository(Worker)
     private workerRepository: Repository<Worker>,
     @InjectRepository(JobPost)
@@ -28,12 +28,10 @@ export class ApplicationsService {
 
   async create(req, jobPostId: number) {
 
-    const { sub } = req.user
-
-    const user = await this.userRepository.findOneBy({ id: sub })
+    const user = await this.userRepository.getUserById(req.user.sub)
 
     if (!user) {
-      throw new Error(`User with id ${sub} not found`)
+      throw new Error(`User with id ${req.user.sub} not found`)
     }
 
     const worker = await this.workerRepository.findOneBy({ user })

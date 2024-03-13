@@ -19,10 +19,10 @@ export class Applications extends AbstractEntity<Applications> {
   @Column({ type: 'enum', enum: ApplicationStatus, default: ApplicationStatus.Applying })
   status: ApplicationStatus;
 
-  @ManyToOne(() => Worker, (worker) => worker.applications, {onDelete: 'CASCADE'})
+  @ManyToOne(() => Worker, (worker) => worker.applications, { onDelete: 'CASCADE' })
   worker: Worker;
 
-  @ManyToOne(() => JobPost, (jobPost) => jobPost.applications, {onDelete: 'CASCADE'})
+  @ManyToOne(() => JobPost, (jobPost) => jobPost.applications, { onDelete: 'CASCADE' })
   jobPost: JobPost;
 
 }

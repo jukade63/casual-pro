@@ -11,8 +11,12 @@ export class BusinessesService {
     @InjectRepository(Business)
     private readonly businessRepository: Repository<Business>,
   ){}
-  async create(createBusinessDto: CreateBusinessDto) {
-    await this.businessRepository.save(createBusinessDto);
+  async create(userId: number) {
+    await this.businessRepository.save({
+      user: {
+        id: userId
+      }
+    });
   }
 
   findAll() {

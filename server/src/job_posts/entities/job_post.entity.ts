@@ -2,7 +2,7 @@ import { Applications } from 'src/applications/entities/application.entity';
 import { Business } from 'src/businesses/entities/business.entity';
 import { AbstractEntity } from 'src/database/Abstract.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany, OneToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column,ManyToOne, OneToMany, OneToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 
 export enum JobType {
   Casual = 'casual',

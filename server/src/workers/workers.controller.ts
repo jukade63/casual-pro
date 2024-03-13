@@ -7,10 +7,10 @@ import { UpdateWorkerDto } from './dto/update-worker.dto';
 export class WorkersController {
   constructor(private readonly workersService: WorkersService) {}
 
-  @Post()
-  create(@Body() createWorkerDto: CreateWorkerDto) {
-    return this.workersService.create(createWorkerDto);
-  }
+  // @Post()
+  // create(@Body() createWorkerDto: CreateWorkerDto) {
+  //   return this.workersService.create(createWorkerDto);
+  // }
 
   @Get()
   findAll() {

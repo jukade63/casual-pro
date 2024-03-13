@@ -4,7 +4,6 @@ import { UpdateWorkerDto } from './dto/update-worker.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Worker } from './entities/worker.entity';
 import { Repository } from 'typeorm';
-import { Experience } from 'src/experience/entities/experience.entity';
 
 @Injectable()
 export class WorkersService {
@@ -12,11 +11,9 @@ export class WorkersService {
   constructor(
     @InjectRepository(Worker)
     private workerRepository: Repository<Worker>,
-    @InjectRepository(Experience)
-    private readonly experienceRepository: Repository<Experience>,
     ) {}
-  create(createWorkerDto: CreateWorkerDto) {
-    return 'This action adds a new worker';
+  async create(userId: number) {
+    return await this.workerRepository.save({ user: { id: userId }})
   }
 
   findAll() {

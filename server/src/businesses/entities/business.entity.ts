@@ -1,8 +1,7 @@
-// src/entities/business.entity.ts
 import { AbstractEntity } from 'src/database/Abstract.entity';
 import { JobPost } from 'src/job_posts/entities/job_post.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { Entity, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class Business extends AbstractEntity<Business> {

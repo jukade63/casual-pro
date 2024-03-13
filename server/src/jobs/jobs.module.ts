@@ -6,12 +6,14 @@ import { Jobs } from './entities/job.entity';
 import { Ratings } from 'src/ratings/entities/rating.entity';
 import { Applications } from 'src/applications/entities/application.entity';
 import { JobPost } from 'src/job_posts/entities/job_post.entity';
-import { WorkersModule } from 'src/workers/workers.module';
+import { Worker } from 'src/workers/entities/worker.entity';
+import { UserService } from 'src/user/user.service';
+import { UserRepository } from 'src/user/user.repository';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Jobs, Ratings, JobPost,Applications]), WorkersModule],
+  imports: [TypeOrmModule.forFeature([Jobs, Ratings, JobPost, Applications, Worker]), UserModule],
   controllers: [JobsController],
-  providers: [JobsService],
-  exports: [JobsService],
+  providers: [JobsService, UserService, UserRepository],
 })
-export class JobsModule {}
+export class JobsModule { }

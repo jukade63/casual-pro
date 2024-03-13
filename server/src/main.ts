@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as express from 'express'
+import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +12,7 @@ async function bootstrap() {
   app.use(express.json({ limit: '50mb' }));
   const port = app.get(ConfigService).getOrThrow('SERVER_PORT')
   app.useGlobalPipes(new ValidationPipe())
-  await app.listen(port || 4000);
+  await app.listen(port || 4000, () => console.log(`server started on port ${port}`));
+  
 }
 bootstrap();

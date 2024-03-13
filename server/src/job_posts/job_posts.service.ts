@@ -2,12 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Jobs } from 'src/jobs/entities/job.entity';
-import { User } from 'src/users/entities/user.entity';
-import { application } from 'express';
 import { JobPost, JobType, Status } from './entities/job_post.entity';
 import { CreateJobPostDto } from './dto/create-job_post.dto';
 import { UpdateJobPostDto } from './dto/update-job_post.dto';
-import { JobsService } from 'src/jobs/jobs.service';
+import { User } from 'src/user/entities/user.entity';
 
 
 @Injectable()
@@ -16,11 +14,10 @@ export class JobPostsService {
   constructor(
     @InjectRepository(JobPost)
     private readonly jobPostRepository: Repository<JobPost>,
-    @InjectRepository(Jobs)
-    private readonly jobRepository: Repository<Jobs>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly jobsService: JobsService
+    @InjectRepository(Jobs)
+    private readonly jobsRepository: Repository<Jobs>,
   ) { }
 
   private async getUserById(id: number, relations?: string[]) {
@@ -36,15 +33,13 @@ export class JobPostsService {
 
     if (!user) throw new NotFoundException('user not found')
 
-    const jobPost = this.jobPostRepository.create({ ...createJobPostDto, business: user.business });
-    const savedJobPost = await this.jobPostRepository.save(jobPost);
+    const jobPost = await this.jobPostRepository.save({ ...createJobPostDto, business: user.business });
 
-    const job = this.jobRepository.create({
-      jobPost: savedJobPost,
+    const job = await this.jobsRepository.save({
+      jobPost: jobPost,
     })
-
-    await this.jobsService.create(job)
-    return savedJobPost
+    await this.jobPostRepository.update({ id: jobPost.id }, { job: job })
+    return jobPost
   }
 
   async findAll(location?: string, category?: string, jobType?: JobType, limit?: number, start?: number) {
@@ -131,6 +126,7 @@ export class JobPostsService {
   }
 
   async update(id: number, updateJobPostDto: UpdateJobPostDto) {
+
     const jobPost = await this.jobPostRepository.findOneBy({ id });
     if (!jobPost) {
       return new NotFoundException('job post not found')

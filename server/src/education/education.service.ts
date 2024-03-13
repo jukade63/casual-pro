@@ -4,7 +4,6 @@ import { UpdateEducationDto } from './dto/update-education.dto';
 import { Repository } from 'typeorm';
 import { Education } from './entities/education.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { WorkersService } from 'src/workers/workers.service';
 import { Worker } from 'src/workers/entities/worker.entity';
 
 @Injectable()
@@ -17,10 +16,8 @@ export class EducationService {
     private readonly workerRepository: Repository<Worker>,
   ) { }
   async create(createEducationDto: CreateEducationDto): Promise<Education> {
-    console.log(createEducationDto.userId);
     
     const worker = await this.workerRepository.findOne({ where: { user: {id: createEducationDto.userId} } });
-    console.log(worker);
     
     if (!worker) {
       throw new NotFoundException(`No worker found for ID ${createEducationDto.userId}`);

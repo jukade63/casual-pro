@@ -1,18 +1,13 @@
 import { ConfigService } from "@nestjs/config";
-import { DataSource } from "typeorm";
-import {config} from 'dotenv'
+import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
-config({path: '.env'})
-
-const configService = new ConfigService()
-
-export default new DataSource({
+export const ormConfigFactory = async (configService: ConfigService) => ({
     type: 'postgres',
     host: configService.getOrThrow('POSTGRES_HOST'),
     port: +configService.getOrThrow('POSTGRES_PORT'),
     username: configService.getOrThrow('POSTGRES_USER'),
     password: configService.getOrThrow('POSTGRES_PASSWORD'),
     database: configService.getOrThrow('POSTGRES_DB'),
-    entities: ['src/**/*.entity{.ts,.js}'],
-    migrations: ['migrations/*{.ts,.js}'],
-})
+    synchronize: true,
+    entities: [__dirname + '/../**/*.entity.js'] 
+} as TypeOrmModuleOptions)

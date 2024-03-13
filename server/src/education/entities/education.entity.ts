@@ -1,6 +1,6 @@
 import { AbstractEntity } from 'src/database/Abstract.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Education extends AbstractEntity<Education> {

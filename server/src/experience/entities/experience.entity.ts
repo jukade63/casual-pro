@@ -1,11 +1,10 @@
+import { AbstractEntity } from 'src/database/Abstract.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne } from 'typeorm';
 
 
 @Entity()
-export class Experience extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class Experience extends AbstractEntity<Experience> {
 
   @Column()
   position: string;

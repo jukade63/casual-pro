@@ -2,11 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, 
 import { JobPostsService } from './job_posts.service';
 import { CreateJobPostDto } from './dto/create-job_post.dto';
 import { UpdateJobPostDto } from './dto/update-job_post.dto';
-import { AuthGuard } from 'src/users/user.guard';
 import { JobType } from './entities/job_post.entity';
 import { Role } from 'src/role/role.decorator';
-import { UserType } from 'src/users/entities/user.entity';
 import { RoleGuard } from 'src/role/role.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { UserType } from 'src/user/types/user-type.type';
 
 @Controller('job-posts')
 export class JobPostsController {
@@ -14,10 +14,9 @@ export class JobPostsController {
 
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
-  @Role(UserType.Business)
+  @Role([UserType.Business])
   @Post()
   create(@Request() req, @Body() createJobPostDto: CreateJobPostDto) {
-
     return this.jobPostsService.create(req, createJobPostDto);
   }
 
@@ -34,14 +33,14 @@ export class JobPostsController {
 
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
-  @Role(UserType.Business)
+  @Role([UserType.Business])
   @Get('business/all')
   findAllByBusiness(@Request() req) {    
     return this.jobPostsService.findAllByBusiness(req);
   }
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
-  @Role(UserType.Worker)
+  @Role([UserType.Worker])
   @Get('worker/all')
   findAllByWorker(@Request() req) {    
     return this.jobPostsService.findAllByWorker(req);
@@ -55,7 +54,7 @@ export class JobPostsController {
 
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
-  @Role(UserType.Business)
+  @Role([UserType.Business])
   @Get('business/:id')
   findOneByBusiness(@Param('id', ParseIntPipe) id: number) {
     return this.jobPostsService.findOneByBusiness(id);
@@ -63,7 +62,7 @@ export class JobPostsController {
 
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
-  @Role(UserType.Business)
+  @Role([UserType.Business])
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateJobPostDto: UpdateJobPostDto) {
     return this.jobPostsService.update(id, updateJobPostDto);

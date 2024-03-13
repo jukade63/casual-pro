@@ -1,11 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe } from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
-import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { RoleGuard } from 'src/role/role.guard';
-import { UserType } from 'src/users/entities/user.entity';
 import { Role } from 'src/role/role.decorator';
-import { AuthGuard } from 'src/users/user.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { UserType } from 'src/user/types/user-type.type';
 
 @Controller('applications')
 export class ApplicationsController {
@@ -14,7 +13,7 @@ export class ApplicationsController {
   @Post(':jobPostId')
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
-  @Role(UserType.Worker)
+  @Role([UserType.Worker])
   create(@Request() req,
     @Param('jobPostId', ParseIntPipe) jobPostId: number
     ) {
@@ -28,7 +27,7 @@ export class ApplicationsController {
 
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
-  @Role(UserType.Worker)
+  @Role([UserType.Worker])
   @Get('worker/all')
   findAllByWorker(@Request() req) {
     return this.applicationsService.findAllByWorker(req);

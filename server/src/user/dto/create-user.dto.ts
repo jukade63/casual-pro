@@ -1,5 +1,6 @@
-import { IsString, IsEmail, IsEnum, IsOptional, isInt, IsInt } from 'class-validator';
-import { UserType } from '../entities/user.entity';
+import { IsString, IsEmail, IsEnum, IsOptional, IsInt } from 'class-validator';
+import { UserType } from '../types/user-type.type';
+
 
 export class CreateUserDto {
   @IsOptional()
@@ -17,9 +18,8 @@ export class CreateUserDto {
   @IsEnum(UserType)
   readonly userType: UserType;
 
-  @IsOptional()
   @IsString()
-  readonly phoneNumber?: string;
+  readonly phoneNumber: string;
 
   @IsOptional()
   @IsString()
@@ -29,4 +29,3 @@ export class CreateUserDto {
   @IsString()
   publicId?: string;
 }
-

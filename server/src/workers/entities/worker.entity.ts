@@ -4,8 +4,8 @@ import { Education } from 'src/education/entities/education.entity';
 import { Experience } from 'src/experience/entities/experience.entity';
 import { Jobs } from 'src/jobs/entities/job.entity';
 import { Skills } from 'src/skills/entities/skill.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { Entity, Column, OneToOne, JoinColumn, OneToMany, ManyToMany, } from 'typeorm';
 
 @Entity()
 export class Worker extends AbstractEntity<Worker> {

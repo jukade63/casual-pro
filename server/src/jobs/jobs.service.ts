@@ -1,20 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
-import { QueryBuilder, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Jobs } from './entities/job.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ApplicationsService } from 'src/applications/applications.service';
-import { WorkersService } from 'src/workers/workers.service';
 import { JobPost } from 'src/job_posts/entities/job_post.entity';
 import { JobPostsService } from 'src/job_posts/job_posts.service';
+import { Worker } from 'src/workers/entities/worker.entity';
 
 @Injectable()
 export class JobsService {
   constructor(
     @InjectRepository(Jobs)
     private readonly jobsRepository: Repository<Jobs>,
-    private readonly workersService: WorkersService,
+
+    @InjectRepository(Worker)
+    private readonly workerRepository: Repository<Worker>,
+  
     @InjectRepository(JobPost)
     private readonly jobPostService: JobPostsService
 
@@ -46,7 +48,12 @@ export class JobsService {
   }
 
   async findFavorites(req) {
-    const worker = await this.workersService.findOneByUserId(req.user.sub);
+    
+    const { sub } = req.user
+    const worker = await this.workerRepository.findOne({ where: { user: { id: sub } } })    
+    console.log(worker);
+    
+    
     const jobs = await this.jobsRepository.find({
       where: { isFavorite: true, workers: { id: worker.id } },
       relations: ['jobPost', 'jobPost.business', 'jobPost.business.user', 'jobPost.applications'],
@@ -71,7 +78,12 @@ export class JobsService {
         }
       }
     })
+    
+    if (!jobs) {
+      throw new NotFoundException('No jobs found');
+    }
     return jobs
+
   }
 
   findOne(id: number) {
