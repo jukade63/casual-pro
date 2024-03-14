@@ -12,7 +12,7 @@ export default function BasicInfo() {
 
 
   return (
-    <div className="flex gap-4 items-center justify-evenly bg-orange-400 text-white p-5 max-w-3xl rounded-md">
+    <div className="flex gap-4 items-center justify-evenly p-5">
       <div className="flex gap-4 items-center">
         <div className="relative w-20 h-20">
           <Image

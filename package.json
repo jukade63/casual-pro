@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start:server": "cd ./server && npm run start:dev",
-    "dev": "next dev -p 3001",
+    "dev": "next dev",
     "start:app": "concurrently --kill-others-on-fail \"npm run start:server\" \"npm run dev\"",
     "build": "next build",
     "start": "next start",

@@ -5,7 +5,7 @@ import React, { Suspense } from "react";
 const Profile = () => {
   return (
     <>
-      <h1>Profile</h1>
+      <h1 className="font-bold text-2xl">Profile</h1>
       <div className="p-6 bg-[#f7c657] rounded-md mt-12">
           <General />
       </div>

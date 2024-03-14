@@ -18,12 +18,21 @@ export class JobsController {
   @Role([UserType.Worker])
   @Get('favorites')
   findFavorites(@Request() req) {
-    return this.jobsService.findFavorites(req);
+    return this.jobsService.findFavorites(req.user.sub);
   }
 
   @Get()
   findAll() {
     return this.jobsService.findAll();
+  }
+
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
+  @Role([UserType.Worker])
+  @Get('completed')
+  getCompletedJobs(@Request() req) {
+    
+    return this.jobsService.getCompletedJobs(req.user.sub);
   }
 
   @Patch(':jobId')

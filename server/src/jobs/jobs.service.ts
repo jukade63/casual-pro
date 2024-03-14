@@ -47,13 +47,29 @@ export class JobsService {
     return await this.jobsRepository.find({ relations: ['jobPost', 'workers'] })
   }
 
-  async findFavorites(req) {
+  async getCompletedJobs(userId: number) {
     
-    const { sub } = req.user
-    const worker = await this.workerRepository.findOne({ where: { user: { id: sub } } })    
-    console.log(worker);
-    
-    
+    const worker = await this.workerRepository.findOne({ where: { user: { id: userId } } })
+    return await this.jobsRepository.find({ where: { completed: true, workers: { id: worker.id } }, relations: ['jobPost'], select: {
+      id: true,
+      completed: true,
+      jobPost: {
+        id: true,
+        startDate: true,
+        endDate: true,
+        paymentAmount: true,
+      }
+    },
+    order: {
+      jobPost: {
+        endDate: 'ASC'
+      }
+    }
+  })
+  }
+
+  async findFavorites(userId: number) {    
+    const worker = await this.workerRepository.findOne({ where: { user: { id: userId  } } })    
     const jobs = await this.jobsRepository.find({
       where: { isFavorite: true, workers: { id: worker.id } },
       relations: ['jobPost', 'jobPost.business', 'jobPost.business.user', 'jobPost.applications'],

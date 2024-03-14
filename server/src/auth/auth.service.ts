@@ -56,7 +56,7 @@ export class AuthService {
         const { password, ...rest } = userData;
         const hash = await bcrypt.hash(password, 10);
 
-        const newUser = await this.userRepository.createUser({ ...rest, password: hash });
+        const newUser = await this.userRepository.saveUser({ ...rest, password: hash });
         if (newUser.userType === UserType.Business) {
             await this.businessService.create(newUser.id);
         } else {

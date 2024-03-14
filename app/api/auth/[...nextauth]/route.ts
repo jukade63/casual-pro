@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
           if(!credentials?.email || !credentials?.password) {
             return null;
           }
-          const resp = await fetch(BACKEND_URL + "/users/login", {
+          const resp = await fetch(BACKEND_URL + "/auth/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

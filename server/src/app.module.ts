@@ -10,11 +10,11 @@ import { JobPostsModule } from './job_posts/job_posts.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { JobsModule } from './jobs/jobs.module';
 import { RatingsModule } from './ratings/ratings.module';
-import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from 'middlewares/logger.middleware';
+import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 
 @Module({
   imports: [AuthModule, UserModule, DatabaseModule, WorkersModule,

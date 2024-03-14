@@ -8,13 +8,13 @@ export class UserRepository {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>
     ) { }
-    async createUser(userData: Partial<User>): Promise<User> {
+    async saveUser(userData: Partial<User>): Promise<User> {
         return await this.userRepository.save(userData);
     }
-    async findByEmail(email: string): Promise<User | null> {
+    async findByEmail(email: string): Promise<User> {
         return await this.userRepository.findOne({ where: { email } });
     }
-    async getUserById(id: number): Promise<User | null> {
+    async getUserById(id: number): Promise<User> {
         return await this.userRepository.findOne({ where: { id } });
     }
     async updateUser(userId: number, userData: Partial<User>) {

@@ -12,10 +12,12 @@ import { UserService } from 'src/user/user.service';
 import { UserRepository } from 'src/user/user.repository';
 import { JobsService } from 'src/jobs/jobs.service';
 import { Worker } from 'src/workers/entities/worker.entity';
+import { CloudinaryService } from 'src/common/cloudinary/cloudinary.service';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([JobPost, Applications, Jobs, User, Worker])],
   controllers: [JobPostsController],
-  providers: [JobPostsService, UserService, UserRepository, JobsService],
+  providers: [JobPostsService, UserService, JobsService, UserRepository, CloudinaryService],
 })
 export class JobPostsModule { }

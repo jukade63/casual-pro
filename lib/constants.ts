@@ -1,6 +1,6 @@
 import { Briefcase, FileStack, Crown, Rocket, MousePointerClick, UserRound, SendToBack, LayoutDashboard } from "lucide-react"
 
-export const BACKEND_URL = 'http://localhost:3000'
+export const BACKEND_URL = 'http://localhost:4500'
 export const navLinks = [
     {
         name: 'Find Jobs',

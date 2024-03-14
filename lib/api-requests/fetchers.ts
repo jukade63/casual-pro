@@ -110,3 +110,13 @@ export const getFavoutiteJobs = async () => {
     return await res.json()
 }
 
+export const getCompletedJobs = async () => {
+    const session = await getSession()
+    const res = await fetch(`${BACKEND_URL}/jobs/completed`, {
+        headers: {
+            Authorization: `Bearer ${session?.accessToken}`
+        },
+    })
+    return await res.json()
+}
+

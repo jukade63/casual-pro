@@ -15,7 +15,6 @@ export class ApplicationsService {
   constructor(
     @InjectRepository(Applications)
     private readonly applicationsRepository: Repository<Applications>,
-    @InjectRepository(User)
     private userRepository: UserRepository,
     @InjectRepository(Worker)
     private workerRepository: Repository<Worker>,
@@ -37,6 +36,7 @@ export class ApplicationsService {
     const worker = await this.workerRepository.findOneBy({ user })
 
     const jobPost = await this.jobPostRepository.findOneBy({ id: jobPostId })
+    
 
     const existingApplication = await this.applicationsRepository.findOne({
       where:

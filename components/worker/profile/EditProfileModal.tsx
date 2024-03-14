@@ -32,7 +32,6 @@ import { useSession } from "next-auth/react";
 
 export default function EditProfileModal() {
   const { isOpen, onClose, type, data } = useModal();
-  const [defaultValue, setDefaultValue] = useState({});
   const { update } = useSession();
   const router = useRouter();
   const [submitError, setSubmitError] = useState("");
@@ -74,7 +73,7 @@ export default function EditProfileModal() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     
     try {
-      const res = await fetch(`${BACKEND_URL}/users`, {
+      const res = await fetch(`${BACKEND_URL}/user`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -87,10 +86,8 @@ export default function EditProfileModal() {
         }),
       });
       const data = await res.json();
-      console.log(data);
 
       if (res.ok) {
-        // update session
         await update({
           ...session,
           user: data,
