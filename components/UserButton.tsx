@@ -15,7 +15,6 @@ import WorkerDropDownItems from "./WorkerDropDownItems";
 import BusinessDropDownItems from "./BusinessDropDownItems";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
 
 export function UserButton() {
   const { data: session } = useSession();
@@ -52,7 +51,7 @@ export function UserButton() {
           {user?.userType === "business" && <BusinessDropDownItems />}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+        <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/' })}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>

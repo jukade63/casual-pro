@@ -34,7 +34,7 @@ export class JobPostsController {
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
   @Role([UserType.Business])
-  @Get('business/all')
+  @Get('business')
   findAllByBusiness(@Request() req) {    
     return this.jobPostsService.findAllByBusiness(req);
   }
@@ -49,7 +49,7 @@ export class JobPostsController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {   
      
-    return this.jobPostsService.fineOne(id);
+    return this.jobPostsService.findOne(id);
   }
 
   @UseGuards(RoleGuard)

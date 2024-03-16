@@ -2,27 +2,10 @@
 import { getServerSession } from "next-auth"
 import { BACKEND_URL } from "../constants"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { redirect } from "next/navigation"
-import { revalidatePath } from "next/cache"
 
 export const getSession = async () => {
     const session = await getServerSession(authOptions)
     return session
-}
-const fetchWithSessionAndRedirect = async (url: string, options: RequestInit) => {
-    const session = await getSession()
-    if (!session) {
-        redirect('/sign-in')
-    }
-    const res = await fetch(url, { ...options, headers: { Authorization: `Bearer ${session?.accessToken}` } });
-    if (!res.ok) {
-        if (res.status === 403) {
-            redirect('/sign-in');
-        } else {
-            throw new Error('Error fetching data');
-        }
-    }
-    return res.json();
 }
 
 export const getAllJobs = async (page: number, limit: number, location?: string, category?: string, jobType?: string) => {
@@ -47,9 +30,14 @@ export const getAllJobs = async (page: number, limit: number, location?: string,
 }
 
 export const getJobPostsByBusiness = async () => {
-    return fetchWithSessionAndRedirect(`${BACKEND_URL}/job-posts/business/all`, {
-        next: { tags: ['business-job-posts'] }
+    const session = await getSession()
+    const res = await fetch(`${BACKEND_URL}/job-posts/business`, {
+        headers: {
+            Authorization: `Bearer ${session?.accessToken}`
+        },
     })
+    const jobPosts = await res.json(); 
+    return jobPosts;
 }
 
 export const getJobPostById = async (id: number) => {
@@ -116,6 +104,17 @@ export const getCompletedJobs = async () => {
         headers: {
             Authorization: `Bearer ${session?.accessToken}`
         },
+    })
+    return await res.json()
+}
+
+export const getNotifications = async () => {
+    const session = await getSession()
+    const res = await fetch(`${BACKEND_URL}/notification`, {
+        headers: {
+            Authorization: `Bearer ${session?.accessToken}`
+        },
+        next: { tags: ['notifications'] }
     })
     return await res.json()
 }

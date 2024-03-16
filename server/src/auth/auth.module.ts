@@ -12,6 +12,7 @@ import { BusinessesService } from 'src/businesses/businesses.service';
 import { WorkersService } from 'src/workers/workers.service';
 import { Business } from 'src/businesses/entities/business.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [UserModule, TypeOrmModule.forFeature([User, Worker, Business]),
@@ -22,7 +23,7 @@ import { Worker } from 'src/workers/entities/worker.entity';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, UserRepository, BusinessesService, WorkersService],
+  providers: [AuthService, UserRepository, BusinessesService, WorkersService, EmailService],
   controllers: [AuthController],
 })
 export class AuthModule { }

@@ -1,19 +1,19 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "src/user/entities/user.entity";
 import { UserRepository } from "src/user/user.repository";
 import * as bcrypt from 'bcryptjs';
-import { UserType } from "src/user/types/user-type.type";
-import { BusinessesService } from "src/businesses/businesses.service";
-import { WorkersService } from "src/workers/workers.service";
+import { ConfigService } from "@nestjs/config";
+import { EmailService } from "src/email/email.service";
+import { template } from "handlebars";
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly jwtService: JwtService,
-        private readonly businessService: BusinessesService,
-        private readonly workerService: WorkersService
+        private readonly configService: ConfigService,
+        private readonly emailService: EmailService
     ) { }
 
     async validateUser(email: string, password: string): Promise<User | null> {
@@ -44,33 +44,58 @@ export class AuthService {
         if (!pwMatches) {
             throw new NotFoundException('Credentials incorrect');
         }
-        const payload = { sub: user.id, expiresIn: 60 * 60 * 24 }
-        const returnedUser = { ...user };
-        delete returnedUser.password
+        const payload = { sub: user.id, email: user.email };
+        delete user.password
         return {
-            user: returnedUser,
-            accessToken: await this.generateToken(payload),
+            user,
+            accessToken: await this.generateToken(payload, this.configService.get('JWT_SECRET'), '5m'),
+            refreshToken: await this.generateToken(payload, this.configService.get('REFRESH_TOKEN_SECRET'), '7d'),
+            expiresIn: new Date(Date.now() + 5 * 60 * 1000),
         }
     }
     async register(userData: Partial<User>): Promise<User> {
         const { password, ...rest } = userData;
         const hash = await bcrypt.hash(password, 10);
 
-        const newUser = await this.userRepository.saveUser({ ...rest, password: hash });
-        if (newUser.userType === UserType.Business) {
-            await this.businessService.create(newUser.id);
-        } else {
-            await this.workerService.create(newUser.id);
+        return await this.userRepository.saveUser({ ...rest, password: hash });
+
+
+    }
+
+    async refreshToken(user: any) {
+        const payload = { sub: user.sub, email: user.email };
+        return {
+            accessToken: await this.generateToken(payload, this.configService.get('JWT_SECRET'), '5m'),
+            refreshToken: await this.generateToken(payload, this.configService.get('REFRESH_TOKEN_SECRET'), '7d'),
+            expiresIn: new Date(Date.now() + 5 * 60 * 1000),
         }
-        return newUser;
+    }
+
+    async forgotPassword(email: string) {
+        const user = await this.userRepository.findByEmail(email);
+        if (!user) {
+            throw new BadRequestException('User not found');
+        }
+        const token = await this.generateToken({ id: user.id }, this.configService.get('FORGOT_PASS_SECRET'), '15m');
+        const resetPassUrl = this.configService.get('CLIENT_URL') + '/forgot-password?token=' + token;
+
+        await this.emailService.sendEmail({
+            email, 
+            subject:'Reset your password',
+            template: 'forgot-password',
+            name: user.username,
+            activationLink: resetPassUrl
+        })
+
+        return { message: 'Email sent, check your inbox' }
 
     }
 
     private validatePassword(password: string, hash: string): Promise<boolean> {
         return bcrypt.compare(password, hash);
     }
-    private async generateToken(payload: Record<string, any>) {
-        return await this.jwtService.signAsync(payload);
+    private async generateToken(payload: Record<string, any>, secret: string, expiresIn: string) {
+        return await this.jwtService.signAsync(payload, { secret, expiresIn })
     }
 
 }

@@ -69,7 +69,7 @@ export class JobPostsService {
     return query.getMany();
   }
 
-  async fineOne(id: number) {
+  async findOne(id: number) {
     const jobPost = await this.jobPostRepository.findOne({
       where: { id },
       relations: ['business', 'business.user', 'job']

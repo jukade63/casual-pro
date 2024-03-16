@@ -13,6 +13,8 @@ declare module "next-auth" {
             publicId: string
         };
         accessToken: string;
+        refreshToken: string;
+        expiresIn: string
     }
 }
 declare module "next-auth/jwt" {
@@ -27,5 +29,7 @@ declare module "next-auth/jwt" {
             publicId: string
         };
         accessToken: string;
+        refreshToken: string;
+        expiresIn: string
     }
 }

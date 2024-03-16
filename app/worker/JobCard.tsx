@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { formatDateTimeRange } from "@/lib/functions.ts/formatDateTimeRange";
 import { cn } from "@/lib/utils";
@@ -13,16 +14,15 @@ export default function JobCard({ jobPost }: { jobPost: JobPost }) {
       className="mb-4 mx-auto p-3 flex gap-2 shadow-sm relative"
     >
       <div className="hidden md:flex md:flex-col md:justify-center md:items-center border-r border-gray-300">
-        <div className="min-w-[200px] text-center text-lg font-semibold">{jobPost?.business?.user.username}</div>
-        <div className="relative w-16 h-16">
-          <Image
-            src={jobPost?.business?.user?.imgUrl ?? ""}
-            fill
-            className="rounded-full"
-            objectFit="cover"
-            alt="business-logo"
-          />
+        <div className="min-w-[200px] text-center text-lg font-semibold">
+          {jobPost?.business?.user.username}
         </div>
+        <Avatar>
+          <AvatarImage src={jobPost?.business?.user.imgUrl} sizes="4rem" />
+          <AvatarFallback>
+            <Image src="/fallback-img.png" alt="profile" width={100} height={100}/>
+          </AvatarFallback>
+        </Avatar>
       </div>
 
       <div className="flex-grow">
@@ -53,7 +53,9 @@ export default function JobCard({ jobPost }: { jobPost: JobPost }) {
           <div className="font-bold text-lg">{jobPost.title}</div>
           <div className="flex gap-2 ">
             <Building2 size={15} color="#5ba5e9" />
-            <div className="text-sky-500 text-sm mb-3">{jobPost.location.join(", ")}</div>
+            <div className="text-sky-500 text-sm mb-3">
+              {jobPost.location.join(", ")}
+            </div>
           </div>
           {/* <div>{jobPost.requirements[0]}</div> */}
           <div>

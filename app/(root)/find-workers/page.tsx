@@ -1,6 +1,8 @@
+import dynamic from 'next/dynamic'
+ 
+const Testimonials = dynamic(() => import('@/components/business/Testimonial'), { ssr: false })
 import Hero from "@/components/business/Hero";
 import HowItWork from "@/components/business/HowItWorks";
-import Testimonials from "@/components/business/Testimonial";
 import React from "react";
 
 function BusinessPage() {

@@ -13,7 +13,7 @@ export default function WorkerDropDownItems() {
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem>
-        <Link href="/worker/dashbard" className="flex items-center">
+        <Link href="/worker/dashboard" className="flex items-center">
           <GaugeCircle className="mr-2 h-4 w-4" />
           <span>Dashboard</span>
         </Link>

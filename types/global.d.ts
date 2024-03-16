@@ -78,27 +78,21 @@ declare global {
     startDate: Date;
     endDate: Date;
     worker: Worker;
-}
-interface Skill {
-  id?: number;
-  skillName: string;
-  skillLevel?: string | null;
-  certification?: string | null;
-  certLink?:  Url | null;
-  worker: Worker;
-}
+  }
+  interface Skill {
+    id?: number;
+    skillName: string;
+    skillLevel?: string | null;
+    certification?: string | null;
+    certLink?: Url | null;
+    worker: Worker;
+  }
 
-  interface Session {
-    user: {
-        id: number;
-        username: string;
-        email: string;
-        userType: string;
-        phoneNumber: string;
-        imgUrl: string;
-        publicId: string;
-    };
-    accessToken: string;
-}
+  interface INotification {
+    id: number;
+    message: string;
+    read: boolean;
+    craeatedAt: Date;
+  }
 
 }

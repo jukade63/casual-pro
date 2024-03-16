@@ -1,5 +1,5 @@
 import { ClassSerializerInterceptor, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule} from '@nestjs/config'
+import { ConfigModule } from '@nestjs/config'
 import { DatabaseModule } from './database/database.module';
 import { WorkersModule } from './workers/workers.module';
 import { BusinessesModule } from './businesses/businesses.module';
@@ -15,9 +15,14 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from 'middlewares/logger.middleware';
 import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
+import { NotificationModule } from './notification/notification.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
-  imports: [AuthModule, UserModule, DatabaseModule, WorkersModule,
+  imports: [AuthModule,
+    UserModule,
+    DatabaseModule,
+    WorkersModule,
     BusinessesModule,
     EducationModule,
     ExperienceModule,
@@ -25,7 +30,10 @@ import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
     JobPostsModule,
     ApplicationsModule,
     JobsModule,
-    RatingsModule, CloudinaryModule, ConfigModule.forRoot({ isGlobal: true }),],
+    RatingsModule, CloudinaryModule, ConfigModule.forRoot({ isGlobal: true }),
+    NotificationModule,
+    EmailModule,
+  ],
   controllers: [],
   providers: [
     {
@@ -34,8 +42,8 @@ import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
     }
   ],
 })
-export class AppModule implements NestModule{
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }
- }
+}

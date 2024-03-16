@@ -25,19 +25,12 @@ export class ApplicationsService {
 
   ) { }
 
-  async create(req, jobPostId: number) {
+  async create(userId: number, jobPostId: number) {
 
-    const user = await this.userRepository.getUserById(req.user.sub)
-
-    if (!user) {
-      throw new Error(`User with id ${req.user.sub} not found`)
-    }
-
-    const worker = await this.workerRepository.findOneBy({ user })
-
-    const jobPost = await this.jobPostRepository.findOneBy({ id: jobPostId })
+    console.log({userId});
     
-
+    const worker = await this.workerRepository.findOne({where: { user: { id: userId } } })
+    
     const existingApplication = await this.applicationsRepository.findOne({
       where:
       {
@@ -57,12 +50,6 @@ export class ApplicationsService {
     })
 
     const job = await this.jobsRepository.findOneBy({ jobPost: { id: jobPostId } })
-
-
-    if (!job) {
-      throw new NotFoundException
-        (`Job with id ${jobPost.job.id} not found`)
-    }
 
     await job.addWorker(worker)
 

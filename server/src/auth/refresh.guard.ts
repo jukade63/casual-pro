@@ -4,7 +4,7 @@ import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class RefreshGuard implements CanActivate {
     constructor(private jwtService: JwtService,
         private config: ConfigService
         ) {}
@@ -15,8 +15,8 @@ export class AuthGuard implements CanActivate {
         
         if (!token) return false
         try {
-            const user = await this.jwtService.verifyAsync(token, {secret: this.config.get('JWT_SECRET')})
-            request.user = user            
+            const payload = await this.jwtService.verifyAsync(token, {secret: this.config.get('REFRESH_TOKEN_SECRET')})
+            request.user = payload          
             
         } catch (error) {
             return false
@@ -26,6 +26,6 @@ export class AuthGuard implements CanActivate {
 
     private extractTokenFromHeader(request: Request): string | undefined {
         const [type, token] = request.headers.authorization?.split(' ') ?? [];
-        return type === 'Bearer' ? token : undefined;
+        return type === 'Refresh' ? token : undefined;
       }
 }

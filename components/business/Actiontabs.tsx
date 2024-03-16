@@ -8,14 +8,14 @@ export function ActionTabs() {
   const pathname = usePathname();
 
   const currentPathClass =
-    "text-blue-500 hover:no-underline hover:cursor-default";
+    "text-blue-600 hover:cursor-default underline underline-offset-4 ";
 
   return (
-    <div className="container mx-auto h-16 items-center p-4 flex justify-center gap-16 shadow-sm bg-white">
+    <div className="py-2 shadow-sm bg-gray-200 divide-x divide-gray-400 grid grid-cols-2 rounded-sm">
       <Link
         href="job-posts"
         className={cn(
-          "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
+          "ml-4 text-gray-600 hover:underline hover:underline-offset-4 text-center font-semibold",
           pathname === "/business/job-posts" ? currentPathClass : ""
         )}
       >
@@ -24,7 +24,7 @@ export function ActionTabs() {
       <Link
         href="post-job"
         className={cn(
-          "ml-4 text-gray-800 hover:underline hover:underline-offset-4",
+          "ml-4 text-gray-600 hover:underline hover:underline-offset-4 text-center font-semibold",
           pathname === "/business/post-job" ? currentPathClass : ""
         )}
       >
