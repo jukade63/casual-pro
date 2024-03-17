@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { ConfigService } from "@nestjs/config";
 import { EmailService } from "src/email/email.service";
 import { template } from "handlebars";
+import { ResetPasswordDto } from "./dto/reset-password.dto";
 
 @Injectable()
 export class AuthService {
@@ -23,11 +24,13 @@ export class AuthService {
         }
         return null;
     }
-
-
-    async validateToken(token: string): Promise<User | null> {
+    async validateToken(token: string, secret: string): Promise<User | null> {
         try {
-            const decodedToken = await this.jwtService.verifyAsync(token);
+            const decodedToken = await this.jwtService.verifyAsync(token, { secret });
+            if (!decodedToken || decodedToken.exp * 1000 < Date.now()) {
+                throw new BadRequestException('Invalid token');
+            }
+           
             const user = await this.userRepository.getUserById(decodedToken.sub);
             return user;
         } catch (error) {
@@ -76,8 +79,9 @@ export class AuthService {
         if (!user) {
             throw new BadRequestException('User not found');
         }
-        const token = await this.generateToken({ id: user.id }, this.configService.get('FORGOT_PASS_SECRET'), '15m');
-        const resetPassUrl = this.configService.get('CLIENT_URL') + '/forgot-password?token=' + token;
+        const token = await this.generateToken({ sub: user.id }, this.configService.get('FORGOT_PASS_SECRET'), '15m');
+        
+        const resetPassUrl = this.configService.get('CLIENT_URL') + '/reset-password?token=' + token;
 
         await this.emailService.sendEmail({
             email, 
@@ -89,6 +93,17 @@ export class AuthService {
 
         return { message: 'Email sent, check your inbox' }
 
+    }
+
+    async resetPassword(dto: ResetPasswordDto) {
+        const { token, password } = dto;
+        const user = await this.validateToken(token, this.configService.get('FORGOT_PASS_SECRET'));
+        if (!user) {
+            throw new BadRequestException('User not found');
+        }        
+        const hash = await bcrypt.hash(password, 10);
+        await this.userRepository.updateUser(user.id, { password: hash });
+        return { message: 'Password reset successfully' };
     }
 
     private validatePassword(password: string, hash: string): Promise<boolean> {

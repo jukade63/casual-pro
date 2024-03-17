@@ -35,7 +35,7 @@ export default withAuth(
 )
 
 export const config = {
-    matcher: ["/((?!api|sign-in|find-jobs|find-workers|worker/sign-up|business/sign-up|__next/static|_next/image|favicon.ico|$).*)"],
+    matcher: ["/((?!api|sign-in|forgot-password|reset-password|find-jobs|find-workers|worker/sign-up|business/sign-up|__next/static|_next/image|favicon.ico|$).*)"],
 }
 
 

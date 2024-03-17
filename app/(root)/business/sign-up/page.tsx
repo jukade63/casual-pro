@@ -4,7 +4,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
 
-async function page() {
+async function SignUp() {
   const session = await getSession();
   if (session && session.user.userType === "business") redirect("/business/post-job");
   return (
@@ -21,4 +21,4 @@ async function page() {
   );
 }
 
-export default page;
+export default SignUp;

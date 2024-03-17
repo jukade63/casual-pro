@@ -6,10 +6,10 @@ const Profile = () => {
   return (
     <>
       <h1 className="font-bold text-2xl">Profile</h1>
-      <div className="p-6 bg-[#f7c657] rounded-md mt-12">
-          <General />
+      <General />
+      <div className="mt-2">
+        <ProfileTabs />
       </div>
-      <div className="mt-2"><ProfileTabs /></div> 
     </>
   );
 };

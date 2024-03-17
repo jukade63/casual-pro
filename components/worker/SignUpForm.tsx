@@ -40,14 +40,15 @@ export function SignUpForm() {
     },
   });
 
-  const onSubmit = async (values: FormFields) => {
-    startTransition(() => {
-      signUpWorkerAction(values).then((res) => {
-        if (res && res.hasError) {
-          alert(res.message);
-        }
-      });
-    });
+  const onSubmit = (values: FormFields) => {
+    startTransition(async () => {
+      try {
+        await signUpWorkerAction(values)
+      } catch (error: any) {
+        alert(error.message)
+      }
+    })
+
   };
   return (
     <Form {...form}>

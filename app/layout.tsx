@@ -5,6 +5,7 @@ import AuthProvider from "@/components/AuthProvider";
 import ModalProvider from "../providers/ModalProvider";
 import Navbar from "@/components/Navbar";
 import MobileNav from "@/components/worker/MobileNav";
+import { Toaster } from "@/components/ui/toaster";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,6 +28,7 @@ export default function RootLayout({
         <AuthProvider>
           <ModalProvider />
           {children}
+          <Toaster />
         </AuthProvider>
       </body>
     </html>

@@ -15,18 +15,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 import ButtonLoading from "../ButtonLoading";
 import { signInSchema } from "@/lib/schemas/sigin-schema";
+import Link from "next/link";
+import { EyeIcon, EyeOff, KeyRound, Mail } from "lucide-react";
 
 export type FormFields = z.infer<typeof signInSchema>;
+
 
 export function SignInForm() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const form = useForm<FormFields>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -34,6 +36,21 @@ export function SignInForm() {
       password: "",
     },
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [endIcon, setEndIcon] = useState('EyeOff');
+
+  useEffect(() => {
+    if (showPassword) {
+      setEndIcon('EyeOff');
+    } else {
+      setEndIcon('EyeIcon');
+    }
+  })
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState) => !prevState);
+  };
+
   function onSubmit(values: FormFields) {
     startTransition(async () => {
       try {
@@ -65,31 +82,56 @@ export function SignInForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="mail@example.com" {...field} />
+                <Input
+                  placeholder="mail@example.com"
+                  {...field}
+                  startIcon={Mail}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input placeholder="********" {...field} type="password" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        <div className="relative">
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type={showPassword ? "text" : "password"}
+                    startIcon={KeyRound}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {React.cloneElement(
+            endIcon === 'EyeOff' ? <EyeOff/> : <EyeIcon/> , {
+            size: '18',
+            onClick: togglePasswordVisibility,
+            className: 'absolute right-2 bottom-2.5 cursor-pointer',
+          }
+            
           )}
-        />
+        </div>
+
+        <div className="text-center text-sm">
+          Forgot password?
+          <Link href="/forgot-password" className="text-blue-600 ml-2">
+            Get a new password
+          </Link>
+        </div>
 
         <div className="flex justify-center">
           {isPending ? (
             <ButtonLoading />
           ) : (
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending} className="w-1/2">
               Submit
             </Button>
           )}
@@ -100,7 +142,7 @@ export function SignInForm() {
           </p>
         )}
         <div className="text-center">
-          <p className="text-sm">Haven't signed up yet? </p>
+          <p className="text-sm">Don't have an account yet? </p>
           <p
             onClick={() => router.push("/worker/sign-up")}
             className="text-blue-600 text-sm hover:underline hover:underline-offset-4 cursor-pointer mt-2"
