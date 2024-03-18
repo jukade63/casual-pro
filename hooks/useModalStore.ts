@@ -1,11 +1,18 @@
+import { Session } from 'next-auth';
 import {create } from 'zustand'
 
-export type ModalType = 'editProfile' | 'addEducation' 
+export type ModalType = 'editProfile' | 'addEducation' | 'confirm'
 
+interface ConfirmModalData {
+    message: string;
+    onConfirm: () => void;
+    action: Promise<any>;
+  }
 
 interface ModalData {
     session?: Session | null
     education?: Education
+    confirm?: ConfirmModalData
 }
 
 interface ModalStore {

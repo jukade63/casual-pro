@@ -1,4 +1,5 @@
 import Image from "next/image";
+import image from "../../public/reset-pass.jpg";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { ResetPasswordForm } from "./_components/ResetPassWordForm";
@@ -10,8 +11,8 @@ export default function ResetPassword() {
       <div className="absolute inset-0 flex items-center justify-center -top-1/6">
         <div className="max-w-xl w-full p-8 bg-gray-50 rounded-md shadow-sm text-center space-y-4">
           <Image
-            src={"/logo.png"}
-            alt=""
+            src={image}
+            alt="logo"
             width={125}
             height={125}
             className="mx-auto"

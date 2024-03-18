@@ -1,9 +1,8 @@
 "use client";
 import { AddNewEducationModal } from "@/components/worker/profile/AddNewEducationModal";
-import ModalOne from "@/components/worker/profile/ModalOne";
-import ModalTwo from "@/components/worker/profile/EditProfileModal";
 import React, { useEffect, useState } from "react";
 import EditProfileModal from "@/components/worker/profile/EditProfileModal";
+import ConfirmModal from "@/components/ConfirmModal";
 
 export default function ModalProvider() {
   const [isMounted, setIsMounted] = useState(false);
@@ -17,8 +16,7 @@ export default function ModalProvider() {
     <>
       <AddNewEducationModal />
       <EditProfileModal />
-      <ModalOne />
-      <ModalTwo />
+      <ConfirmModal/>
     </>
   );
 }

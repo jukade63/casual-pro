@@ -95,4 +95,5 @@ declare global {
     craeatedAt: Date;
   }
 
+
 }

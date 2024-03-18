@@ -1,20 +1,19 @@
 import { SignInForm } from "@/components/worker/SignInForm";
 import Image from "next/image";
-import React from "react";
-
-function page() {
+import loginImg from "../../public/login.jpg";
+function SignIn() {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col gap-4 items-center">
       <Image
-        src={"/logo.png"}
+        src={loginImg}
         className="object-cover rounded-full"
         alt="app-logo"
-        width={125}
-        height={125}
+        width={150}
+        height={150}
       />
       <SignInForm />
     </div>
   );
 }
 
-export default page;
+export default SignIn;

@@ -7,6 +7,7 @@ import { WorkersService } from "src/workers/workers.service";
 import { RefreshGuard } from './refresh.guard';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { CreateBusinessDto } from 'src/businesses/dto/create-business.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,14 +24,15 @@ export class AuthController {
     }
 
     @Post('register')
-    async register(@Body() body: CreateUserDto) {
-        const user = await this.authService.register(body)
-        if (user.userType === UserType.Business) {
-            await this.businessService.create(user.id);
+    async register(@Body() body: Partial<CreateUserDto>) {
+        const {id: userId, userType} = await this.authService.register(body)
+        if (userType === UserType.Business) {
+        const {industry, description} = body as CreateBusinessDto
+            await this.businessService.create({userId, industry, description});
         } else {
-            await this.workerService.create(user.id);
+            await this.workerService.create(userId);
         }
-        return user
+        return 'user registered'
     }
 
     @Post('refresh')

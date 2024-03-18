@@ -1,8 +1,8 @@
-import { SignUpForm } from "@/components/worker/SignUpForm";
 import { getSession } from "@/lib/api-requests/fetchers";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
+import { SignUpForm } from "./_components/SignUpForm";
 
 async function page() {
   const session = await getSession();

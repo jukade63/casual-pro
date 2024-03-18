@@ -1,5 +1,4 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,32 +13,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import React, { useEffect, useState, useTransition } from "react";
-import ButtonLoading from "@/components/ButtonLoading";
-import { EyeIcon, EyeOff, KeyRound, Mail } from "lucide-react";
+import { SignUpSchema } from "@/lib/schemas/signup-schema";
+import {
+  EyeIcon,
+  EyeOff,
+  KeyRound,
+  Mail,
+  Phone,
+  UserRound,
+} from "lucide-react";
+import { signUpUser } from "@/actions/auth";
 import { useToast } from "@/components/ui/use-toast";
-import { resetPassword } from "@/actions/resetPassword";
-import { useSearchParams } from "next/navigation";
 
-const FormSchema = z
-  .object({
-    password: z.string().min(1, { message: "Please enter your password" }),
-    confirmPassword: z
-      .string()
-      .min(1, { message: "Please confirm your password" }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+export type FormFields = z.infer<typeof SignUpSchema>;
 
-  type FormFields = z.infer<typeof FormSchema>;
-
-export function ResetPasswordForm() {
-  const searchParams = useSearchParams()
-  const token = searchParams.get('token')
+export function SignUpForm() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
+  const [consentChecked, setConsentChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [endIconPassword, setEndIconPassword] = useState("EyeOff");
@@ -68,38 +61,89 @@ export function ResetPasswordForm() {
       setEndIconConfirmPassword("EyeIcon");
     }
   }, [showConfirmPassword]);
-  const form = useForm<FormFields>({
-    resolver: zodResolver(FormSchema),
+
+  const form = useForm<z.output<typeof SignUpSchema>>({
+    resolver: zodResolver(SignUpSchema),
     defaultValues: {
+      username: "",
+      email: "",
+      phoneNumber: "",
       password: "",
       confirmPassword: "",
     },
   });
-  function onSubmit(values: FormFields) {
+
+  const onSubmit = (values: FormFields) => {
     startTransition(async () => {
       try {
-        await resetPassword(values.password, token);
+        const res = await signUpUser(values, "worker");
         toast({
-          title: "Password reset",
-          description: "Try logging in with your new password",
+          title: "Success",
+          description: res.message,
           variant: "success",
         });
       } catch (error) {
         if (error instanceof Error) {
           toast({
-            title: "Failed to reset password",
+            title: "Error",
             description: error.message,
             variant: "error",
           });
         }
       }
     });
-  }
-
+  };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 ">
-         <div className="relative text-left">
+      <form
+        onSubmit={form.handleSubmit((values) => onSubmit(values))}
+        className="space-y-4 min-w-[320px] w-full"
+      >
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input {...field} startIcon={UserRound} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="mail@example.com"
+                  {...field}
+                  startIcon={Mail}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone Number</FormLabel>
+              <FormControl>
+                <Input {...field} startIcon={Phone} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="relative">
           <FormField
             control={form.control}
             name="password"
@@ -123,7 +167,7 @@ export function ResetPasswordForm() {
             className: "absolute right-2 bottom-2.5 cursor-pointer",
           })}
         </div>
-        <div className="relative text-left">
+        <div className="relative">
           <FormField
             control={form.control}
             name="confirmPassword"
@@ -147,14 +191,33 @@ export function ResetPasswordForm() {
             className: "absolute right-2 bottom-2.5 cursor-pointer",
           })}
         </div>
+        <FormItem>
+          <div className="flex items-center gap-1 justify-center">
+            <Input
+              type="checkbox"
+              onChange={() => setConsentChecked(!consentChecked)}
+              checked={consentChecked}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+            />
+            <FormLabel className="text-gray-600">
+              I agree to <span className="text-blue-500">Terms </span> and{" "}
+              <span className="text-blue-500">Privacy Policy</span>
+            </FormLabel>
+          </div>
+        </FormItem>
         <div className="flex justify-center">
-          {isPending ? (
-            <ButtonLoading />
-          ) : (
-            <Button type="submit" disabled={isPending} className="w-1/2">
-              Submit
-            </Button>
-          )}
+          <Button disabled={!consentChecked || isPending} className="w-1/2">
+            {isPending ? "Signing-up..." : "Sign Up"}
+          </Button>
+        </div>
+
+        <div className="text-center">
+          <p className="text-sm">
+            Already have an account?{" "}
+            <Link href="/sign-in" className="text-blue-500 hover:underline">
+              Sign in
+            </Link>
+          </p>
         </div>
       </form>
     </Form>

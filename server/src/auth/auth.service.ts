@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "src/user/entities/user.entity";
 import { UserRepository } from "src/user/user.repository";
@@ -17,29 +17,10 @@ export class AuthService {
         private readonly emailService: EmailService
     ) { }
 
-    async validateUser(email: string, password: string): Promise<User | null> {
-        const user = await this.userRepository.findByEmail(email);
-        if (user && await this.validatePassword(password, user.password)) {
-            return user;
-        }
-        return null;
-    }
-    async validateToken(token: string, secret: string): Promise<User | null> {
-        try {
-            const decodedToken = await this.jwtService.verifyAsync(token, { secret });
-            if (!decodedToken || decodedToken.exp * 1000 < Date.now()) {
-                throw new BadRequestException('Invalid token');
-            }
-           
-            const user = await this.userRepository.getUserById(decodedToken.sub);
-            return user;
-        } catch (error) {
-            return null;
-        }
-    }
+   
 
     async login(auth: Partial<User>) {
-        const user = await this.userRepository.findByEmail(auth.email);
+        const user = await this.validateUser(auth.email);
         if (!user) {
             throw new NotFoundException('Credentials incorrect');
         }
@@ -57,12 +38,14 @@ export class AuthService {
         }
     }
     async register(userData: Partial<User>): Promise<User> {
+        const existingUser = await this.validateUser(userData.email);
+        if (existingUser) {
+            throw new ConflictException('Email already in use');
+        }
         const { password, ...rest } = userData;
         const hash = await bcrypt.hash(password, 10);
 
         return await this.userRepository.saveUser({ ...rest, password: hash });
-
-
     }
 
     async refreshToken(user: any) {
@@ -111,6 +94,23 @@ export class AuthService {
     }
     private async generateToken(payload: Record<string, any>, secret: string, expiresIn: string) {
         return await this.jwtService.signAsync(payload, { secret, expiresIn })
+    }
+    private async validateUser(email: string): Promise<User | null> {
+        return await this.userRepository.findByEmail(email);
+        
+    }
+    private async validateToken(token: string, secret: string): Promise<User | null> {
+        try {
+            const decodedToken = await this.jwtService.verifyAsync(token, { secret });
+            if (!decodedToken || decodedToken.exp * 1000 < Date.now()) {
+                throw new BadRequestException('Invalid token');
+            }
+           
+            const user = await this.userRepository.getUserById(decodedToken.sub);
+            return user;
+        } catch (error) {
+            return null;
+        }
     }
 
 }

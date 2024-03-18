@@ -45,7 +45,7 @@ export function SignInForm() {
     } else {
       setEndIcon('EyeIcon');
     }
-  })
+  }, [showPassword]);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);

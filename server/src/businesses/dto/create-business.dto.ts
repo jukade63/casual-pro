@@ -1,9 +1,10 @@
-import { JobPost } from "src/job_posts/entities/job_post.entity"
-import { User } from "src/user/entities/user.entity"
+import { IsNotEmpty } from "class-validator"
+
 
 export class CreateBusinessDto {
-    industry?: string
-    description?: string
-    user: User
-    jobPosts?: JobPost[]
+    @IsNotEmpty()
+    industry: string
+
+    @IsNotEmpty()
+    description: string
 }

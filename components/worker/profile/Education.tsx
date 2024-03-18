@@ -55,7 +55,7 @@ export const Education = () => {
                     index={index}
                     education={edu}
                     accessToken={session?.accessToken}
-                    userId={session?.user?.id}
+                    userId={session?.user?.id || 0}
                   />
                 ))}
               </tbody>
