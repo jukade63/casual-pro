@@ -26,11 +26,8 @@ export class JobPostsService {
     return user
   }
   async create(req, createJobPostDto: CreateJobPostDto): Promise<JobPost> {
-
     const { sub } = req.user
-
     const user = await this.userRepository.findOne({ where: { id: sub }, relations: ['business'] })
-
     if (!user) throw new NotFoundException('user not found')
 
     const jobPost = await this.jobPostRepository.save({ ...createJobPostDto, business: user.business });
@@ -45,7 +42,8 @@ export class JobPostsService {
   async findAll(location?: string, category?: string, jobType?: JobType, limit?: number, start?: number) {
 
     let query = this.jobPostRepository.createQueryBuilder('jobPost')
-      .where('jobPost.status = :status', { status: Status.Approved });
+      .where('jobPost.status = :status', { status: Status.Approved })
+      .andWhere('jobPost.startDate > :currentDate', { currentDate: new Date() })
 
     if (location) {
       query = query.andWhere('EXISTS (SELECT 1 FROM UNNEST(jobPost.location) AS loc WHERE loc ILIKE :location)', { location: `%${location}%` });
@@ -56,7 +54,6 @@ export class JobPostsService {
     if (jobType) {
       query = query.andWhere('jobPost.jobType = :jobType', { jobType: jobType });
     }
-
     query = query.leftJoinAndSelect('jobPost.business', 'business')
       .leftJoinAndSelect('business.user', 'user')
       .select(['jobPost', 'business', 'user.username', 'user.phoneNumber', 'user.email', 'user.imgUrl'])
@@ -79,7 +76,7 @@ export class JobPostsService {
   }
 
   async findOneByBusiness(id: number) {
-    const jobPost = await this.jobPostRepository
+   return await this.jobPostRepository
       .createQueryBuilder('jobPost')
       .where('jobPost.id = :id', { id })
       .leftJoinAndSelect('jobPost.applications', 'applications')
@@ -89,8 +86,6 @@ export class JobPostsService {
       .leftJoinAndSelect('worker.experiences', 'experiences')
       .leftJoinAndSelect('worker.skills', 'skills')
       .getOne();
-
-    return jobPost;
   }
 
   async findAllByBusiness(req) {

@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 export default function page() {
   return (
-    <div className="mx-auto">
+    <div className="mx-auto min-h-screen">
       <ActionTabs />
       <Suspense fallback={<Loading/>}>
         <JobPostList />

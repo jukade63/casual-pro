@@ -29,14 +29,7 @@ export class JobsService {
     }
     return job;
   }
-  private async updateJobProperties(job: Jobs, updateJobDto: UpdateJobDto) {
-    if (updateJobDto.completed !== undefined) {
-      job.completed = updateJobDto.completed;
-    }
-    if (updateJobDto.isFavorite !== undefined) {
-      job.isFavorite = updateJobDto.isFavorite;
-    }
-  }
+
   async create(createJobDto: CreateJobDto) {
     const job = await this.jobsRepository.save(this.jobsRepository.create(createJobDto));
     await this.jobPostService.update(job.jobPost.id, { ...job.jobPost, job: job });
@@ -44,13 +37,15 @@ export class JobsService {
   }
 
   async findAll() {
-    return await this.jobsRepository.find({ relations: ['jobPost', 'workers'] })
+    return await this.jobsRepository.find({ relations: ['jobPost', 'workers', 'jobPost.business.user'] })
   }
 
   async getCompletedJobs(userId: number) {
-    
     const worker = await this.workerRepository.findOne({ where: { user: { id: userId } } })
-    return await this.jobsRepository.find({ where: { completed: true, workers: { id: worker.id } }, relations: ['jobPost'], select: {
+  
+    return await this.jobsRepository.find({ where: { completed: true, workers: { id: worker.id } }, relations: [
+      'jobPost', 'jobPost.business', 'jobPost.business.user'], 
+    select: {
       id: true,
       completed: true,
       jobPost: {
@@ -58,6 +53,15 @@ export class JobsService {
         startDate: true,
         endDate: true,
         paymentAmount: true,
+        location: true,
+        title: true,
+        business: {
+          id: true,
+          industry: true,
+          user: {
+            username: true,
+          }
+        }
       }
     },
     order: {
@@ -79,12 +83,14 @@ export class JobsService {
           title: true,
           startDate: true,
           endDate: true,
+          location: true,
           business: {
             id: true,
             user: {
               email: true,
               username: true,
               phoneNumber: true,
+              imgUrl: true,
             },
           },
           applications: {
@@ -106,10 +112,11 @@ export class JobsService {
     return `This action returns a #${id} job`;
   }
 
-  async updateJobApplication(id: number, updateJobDto: UpdateJobDto) {
-    const job = await this.getJobById(id);
-    await this.updateJobProperties(job, updateJobDto);
-    return await this.jobsRepository.save(job);
+  async updateJob(id: number, updateJobDto: UpdateJobDto) {
+    
+    const job = await this.jobsRepository.findOne({ where: { id } })
+    
+    await this.jobsRepository.save({...job, ...updateJobDto});
   }
 
   remove(id: number) {

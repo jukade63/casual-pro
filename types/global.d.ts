@@ -14,7 +14,7 @@ declare global {
     id: number;
     industry: string | null;
     description: string | null;
-    user: User;
+    user?: User;
   }
 
   interface Worker {
@@ -50,8 +50,9 @@ declare global {
     category: string;
     available?: boolean;
     status?: string;
-    business: Business;
+    business?: Business;
     applications?: Application[];
+    job?: Job;
   }
 
   interface Application {
@@ -69,15 +70,17 @@ declare global {
     degree: string;
     major: string;
     gradDate: string;
+    worker?: Worker;
   }
 
   interface Experience {
     id?: number;
     position: string;
+    description: string;
     company: string;
     startDate: Date;
     endDate: Date;
-    worker: Worker;
+    worker?: Worker;
   }
   interface Skill {
     id?: number;
@@ -85,7 +88,7 @@ declare global {
     skillLevel?: string | null;
     certification?: string | null;
     certLink?: Url | null;
-    worker: Worker;
+    worker?: Worker;
   }
 
   interface INotification {

@@ -6,13 +6,13 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { Jobs } from './entities/job.entity';
 import { Role } from 'src/role/role.decorator';
 import { RoleGuard } from 'src/role/role.guard';
-import { UserType } from 'src/user/types/user-type.type';
+import { UserType } from 'src/user/types/user-type';
 
 @Controller('jobs')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) { }
 
-  
+
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
   @Role([UserType.Worker])
@@ -31,13 +31,15 @@ export class JobsController {
   @Role([UserType.Worker])
   @Get('completed')
   getCompletedJobs(@Request() req) {
-    
     return this.jobsService.getCompletedJobs(req.user.sub);
   }
 
   @Patch(':jobId')
-  update(@Param('jobId', ParseIntPipe) jobId: number, @Body() updateJobDto: UpdateJobDto) {    
-    return this.jobsService.updateJobApplication(jobId, updateJobDto);
+  update(
+    @Param('jobId', ParseIntPipe) jobId: number,
+    @Body() updateJobDto: UpdateJobDto) {
+
+    return this.jobsService.updateJob(jobId, updateJobDto);
   }
 
 

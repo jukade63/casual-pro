@@ -133,8 +133,9 @@ export default function EditProfileModal() {
               name="imgUrl"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Change Profile Picture</FormLabel>
                   <FormControl>
-                    <Input {...field} type="file" onChange={onImageChange} value={undefined}/>
+                    <Input {...field} type="file" onChange={onImageChange} value={undefined} className="cursor-pointer"/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

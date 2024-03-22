@@ -15,12 +15,17 @@ export default function JobCard({ jobPost }: { jobPost: JobPost }) {
     >
       <div className="hidden md:flex md:flex-col md:justify-center md:items-center border-r border-gray-300">
         <div className="min-w-[200px] text-center text-lg font-semibold">
-          {jobPost?.business?.user.username}
+          {jobPost?.business?.user?.username}
         </div>
         <Avatar>
-          <AvatarImage src={jobPost?.business?.user.imgUrl} sizes="4rem" />
+          <AvatarImage src={jobPost?.business?.user?.imgUrl} sizes="4rem" />
           <AvatarFallback>
-            <Image src="/fallback-img.png" alt="profile" width={100} height={100}/>
+            <Image
+              src="/fallback-img.png"
+              alt="profile"
+              width={100}
+              height={100}
+            />
           </AvatarFallback>
         </Avatar>
       </div>
@@ -45,7 +50,7 @@ export default function JobCard({ jobPost }: { jobPost: JobPost }) {
           <div className="flex flex-col items-end">
             <div>฿{jobPost.paymentAmount}</div>
             <div className="text-xs bg-gray-200 text-gray-600 p-1 px-2 rounded-sm">
-              {formatDateTimeRange(jobPost.startDate, jobPost.endDate)}
+              {formatDateTimeRange(jobPost.startDate, jobPost.endDate)}{" "}
             </div>
           </div>
         </div>
@@ -57,15 +62,16 @@ export default function JobCard({ jobPost }: { jobPost: JobPost }) {
               {jobPost.location.join(", ")}
             </div>
           </div>
-          {/* <div>{jobPost.requirements[0]}</div> */}
           <div>
             {jobPost.requirements.map((requirement) => (
-              <span
-                className="rounded-md p-1 px-2 ml-1 text-xs bg-slate-100 border border-gray-300"
-                key={requirement}
-              >
-                {requirement}
-              </span>
+              <div className="flex flex-wrap gap-2 mb-1 justify-center">
+                <span
+                  className="rounded-md p-1 px-2 ml-1 text-xs bg-slate-100 border border-gray-300"
+                  key={requirement}
+                >
+                  {requirement}
+                </span>
+              </div>
             ))}
           </div>
           <div className="mt-14 text-xs text-gray-500">{jobPost.category}</div>

@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Experience } from './entities/experience.entity';
 import { Repository } from 'typeorm';
+import { Worker } from 'src/workers/entities/worker.entity';
 
 @Injectable()
 export class ExperienceService {
@@ -11,18 +12,29 @@ export class ExperienceService {
   constructor(
     @InjectRepository(Experience)
     private readonly experienceRepository: Repository<Experience>,
+    @InjectRepository(Worker)
+    private readonly workerRepository: Repository<Worker>,
   ) { }
-  async create(createExperienceDto: CreateExperienceDto): Promise<Experience> {
-    const newEducation = this.experienceRepository.create({
-      ...createExperienceDto,
-      worker: { id: createExperienceDto.workerId }
-    });
-    return await this.experienceRepository.save(newEducation);
-  }
 
-  async findAll(workerId: number) {
+  private async getWorker(userId: number) {
+    const worker = await this.workerRepository.findOne({ where: { user: { id: userId } } });
+    if (!worker) {
+      throw new NotFoundException(`worker not found`);
+    }
+    return worker
+  }
+  async create(createExperienceDto: CreateExperienceDto): Promise<Experience> {
+    const worker = await this.getWorker(createExperienceDto.userId)
+    const newExperience = this.experienceRepository.create({
+      ...createExperienceDto,
+      worker
+    });
+    return await this.experienceRepository.save(newExperience);
+  }
+  async findAllByWorker(userId: number) {
+    const worker = await this.getWorker(userId)
     return await this.experienceRepository.find({
-      where: { worker: { id: workerId } },
+      where: { worker: { id: worker.id } },
     });
   }
 
@@ -31,24 +43,22 @@ export class ExperienceService {
   }
 
   async update(id: number, updateExperienceDto: UpdateExperienceDto) {
-    const { workerId, ...updateData } = updateExperienceDto;
-
-    const experience = await this.experienceRepository.findOne({ where: { id, worker: { id: workerId } } });
+    const experience = await this.experienceRepository.findOne({ where: { id } });
 
     if (!experience) {
-      throw new NotFoundException(`No experience found for ID ${id} and/or worker with ID ${workerId}`);
+      throw new BadRequestException('Bad Request');
     }
 
-    const updatedExperience = { ...experience, ...updateData };
+    const updatedExperience = { ...experience, ...updateExperienceDto };
     return await this.experienceRepository.save(updatedExperience);
 
   }
 
-  async remove(id: number, workerId: number) {
-    const experience = await this.experienceRepository.findOne({ where: { id, worker: { id: workerId } } });
+  async remove(id: number) {
+    const experience = await this.experienceRepository.findOne({ where: { id } });
 
     if (!experience) {
-      throw new NotFoundException(`No experience found for ID ${id} and/or worker with ID ${workerId}`);
+      throw new BadRequestException('Bad Request');
     }
 
     await this.experienceRepository.remove(experience);

@@ -2,6 +2,7 @@
 import { revalidateTag } from "next/cache";
 import { BACKEND_URL } from "../constants";
 import { getSession } from "./fetchers";
+import { FormFields } from "@/components/business/EditJobPost";
 
 export async function updateJobPost(id: number, data: JobPost) {
     console.log(`${BACKEND_URL}/job-posts/${id}`);

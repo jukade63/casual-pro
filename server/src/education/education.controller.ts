@@ -1,9 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
 import { EducationService } from './education.service';
 import { CreateEducationDto } from './dto/create-education.dto';
 import { UpdateEducationDto } from './dto/update-education.dto';
+import { RoleGuard } from 'src/role/role.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Role } from 'src/role/role.decorator';
+import { UserType } from 'src/user/types/user-type';
 
 @Controller('education')
+@UseGuards(AuthGuard, RoleGuard)
+@Role([UserType.Worker])
 export class EducationController {
 
   constructor(
@@ -11,20 +17,22 @@ export class EducationController {
   ) { }
 
   @Post()
-  create(@Body() createEducationDto: CreateEducationDto) {
-    console.log(createEducationDto);
+  create(
+    @Body() createEducationDto: CreateEducationDto
+  ) {
+    console.log({createEducationDto});
     
     return this.educationService.create(createEducationDto);
   }
 
   @Get(':userId')
-  findAll(@Param('userId', ParseIntPipe) userId: number) {
-    return this.educationService.findAll(userId);
+  findByWorker(@Param('userId', ParseIntPipe) userId: number) {
+    return this.educationService.findByWorker(userId);
   }
 
   @Get(':id/:userId')
   findOne(@Param('id', ParseIntPipe) id: number,
-  @Param('workerId', ParseIntPipe) workerId: number) {
+    @Param('workerId', ParseIntPipe) workerId: number) {
     return this.educationService.findOne(id, workerId);
   }
 
@@ -36,10 +44,10 @@ export class EducationController {
     return this.educationService.update(id, updateEducationDto);
   }
 
-  @Delete(':id/:userId')
+  @Delete(':id')
   remove(
-    @Param('id') id: string,
-    @Param('userId') userId: string) {
-    return this.educationService.remove(id, userId);
+    @Param('id', ParseIntPipe) id: number,
+   ) {
+    return this.educationService.remove(id);
   }
 }

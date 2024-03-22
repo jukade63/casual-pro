@@ -1,6 +1,6 @@
 import { Entity, Column, OneToOne, OneToMany} from 'typeorm';
 import { Exclude } from '@nestjs/class-transformer';
-import { UserType } from '../types/user-type.type';
+import { UserType } from '../types/user-type';
 import { Business } from 'src/businesses/entities/business.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
 import { AbstractEntity } from 'src/database/Abstract.entity';

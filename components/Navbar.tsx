@@ -1,9 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import logo from "../public/logo.png";
+import logo from "../public/logo2.png";
 import Image from "next/image";
-import { Button } from "./ui/button";
-import { UserButton } from "./UserButton";
 import NavLinks from "./NavLinks";
 
 async function Navbar() {
@@ -15,8 +13,8 @@ async function Navbar() {
             src={logo}
             className="object-cover rounded-full"
             alt="app-logo"
-            width={100}
-            height={80}
+            width={50}
+            height={50}
           />
         </Link>
         <NavLinks />

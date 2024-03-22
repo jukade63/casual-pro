@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBusinessDto } from './dto/create-business.dto';
 import { UpdateBusinessDto } from './dto/update-business.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,12 +23,14 @@ export class BusinessesService {
     return `This action returns all businesses`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} business`;
+  async findOne(userId: number) {
+    const business = await this.businessRepository.findOne({ where: { user: { id: userId } } });
+    if(!business) throw new NotFoundException();
+    return business;
   }
 
-  update(id: number, updateBusinessDto: UpdateBusinessDto) {
-    return `This action updates a #${id} business`;
+  async update(id: number, updateBusinessDto: UpdateBusinessDto) {
+    return await this.businessRepository.update({ id }, updateBusinessDto);
   }
 
   remove(id: number) {

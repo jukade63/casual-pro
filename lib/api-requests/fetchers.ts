@@ -119,3 +119,4 @@ export const getNotifications = async () => {
     return await res.json()
 }
 
+

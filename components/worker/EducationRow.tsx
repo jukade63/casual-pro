@@ -1,30 +1,21 @@
 "use client";
 import { X } from "lucide-react";
 import { useEducation } from "@/hooks/useEducation";
-import { deleteProfileInfo } from "./delete-profile-info";
 import { useModal } from "@/hooks/useModalStore";
+import { deleteProfileData} from "@/actions/worker-profile";
 
 type Props = {
   index: number;
   education: Education;
-  accessToken: string | undefined;
-  userId: number;
 };
 
-export default function EducationRow({ index, education, userId }: Props) {
+export default function EducationRow({ index, education }: Props) {
   const { onOpen } = useModal();
-  const { deleteEducation } = useEducation();
 
   const handleDelete = () => {
-
-    if (!userId || !education.id) {
-      console.error("Access token, user ID, or education ID is missing.");
-      return;
-    }
     onOpen("confirm", {
       confirm: {
-        onConfirm: () => deleteEducation(education.id as number),
-        action: deleteProfileInfo(education.id as number, userId, "education"),
+        action: () => deleteProfileData({section: "education", id: education.id as number}),
         message: "Are you sure you want to delete this education?",
       },
     });

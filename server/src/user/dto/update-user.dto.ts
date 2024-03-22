@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsOptional, IsString } from "class-validator";
-import { UserType } from "../types/user-type.type";
+import { UserType } from "../types/user-type";
 
 export class UpdateUserDto {
     @IsOptional()

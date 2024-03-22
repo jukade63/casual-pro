@@ -1,20 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
 import { ExperienceService } from './experience.service';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
+import { RoleGuard } from 'src/role/role.guard';
+import { Role } from 'src/role/role.decorator';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { UserType } from 'src/user/types/user-type';
 
-@Controller('experience')
+@UseGuards(AuthGuard, RoleGuard)
+@Role([UserType.Worker])
+@Controller('experiences')
 export class ExperienceController {
   constructor(private readonly experienceService: ExperienceService) {}
 
   @Post()
-  create(@Body() createExperienceDto: CreateExperienceDto) {
+  create(
+    @Body() createExperienceDto: CreateExperienceDto
+    ) {
     return this.experienceService.create(createExperienceDto);
   }
 
-  @Get(':workerId')
-  findAll(@Param('workerId', ParseIntPipe) workerId: number) {
-    return this.experienceService.findAll(workerId);
+  @Get(':userId')
+  findAllByWorker(@Param('userId', ParseIntPipe) userId: number) {
+    return this.experienceService.findAllByWorker(userId);
   }
 
   @Get(':id/:workerId')
@@ -31,10 +39,9 @@ export class ExperienceController {
     return this.experienceService.update(id, updateExperienceDto);
   }
 
-  @Delete(':id/:workerId')
+  @Delete(':id')
   remove(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('workerId', ParseIntPipe) workerId: number) {
-    return this.experienceService.remove(id, workerId);
+    @Param('id', ParseIntPipe) id: number) {
+    return this.experienceService.remove(id);
   }
 }

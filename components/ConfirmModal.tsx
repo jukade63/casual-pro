@@ -8,35 +8,37 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
+import { Loader2 } from "lucide-react";
+
 
 export default function ConfirmModal() {
   const { toast } = useToast();
   const { data: { confirm } = {}, onClose, isOpen, type } = useModal();
   const isModalOpen = isOpen && type === "confirm";
+  const [submitting, setSubmitting] = React.useState(false);
   const handleConfirm = async () => {
-    if (confirm) {
+    if (confirm && confirm.action) {
       try {
-        const res = await confirm.action;
-        confirm.onConfirm();
-        if (res) {
-          toast({
-            title: "Success",
-            description: res.message,
-            variant: "success",
-          });
-        }
+        setSubmitting(true); 
+        await confirm.action();
+        toast({
+          title: "Success",
+          description: "Deletion successful",
+          variant: "success",
+        });
         onClose();
       } catch (error) {
-        if (error instanceof Error) {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "error",
-          });
-        }
+        toast({
+          title: "Error",
+          description: "Deletion failed",
+          variant: "error",
+        });
+      } finally {
+        setSubmitting(false); 
       }
     }
   };
+
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -52,8 +54,8 @@ export default function ConfirmModal() {
           >
             Cancel
           </Button>
-          <Button type="submit" variant="destructive" onClick={handleConfirm}>
-            Yes
+          <Button type="submit" variant="destructive" onClick={handleConfirm} disabled={submitting}>
+            {submitting ? <Loader2 /> : "Delete"}
           </Button>
         </div>
       </DialogContent>

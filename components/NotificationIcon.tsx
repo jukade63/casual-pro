@@ -72,7 +72,7 @@ export default function NotificationIcon() {
             <li
               onClick={handleUpdateRead.bind(null, notification.id)}
               className={cn(
-                "text-sm bg-gray-200 text-blue-700 px-2 py-2 hover:bg-gray-100 first:rounded-t-md last:rounded-b-md cursor-pointer",
+                "text-sm bg-gray-200 text-blue-700 px-5 py-3 hover:bg-gray-100 first:rounded-t-md last:rounded-b-md cursor-pointer",
                 notification.read && "text-gray-400 bg-white"
               )}
             >

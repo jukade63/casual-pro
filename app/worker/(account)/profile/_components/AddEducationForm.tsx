@@ -3,8 +3,6 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Dispatch, SetStateAction, useState, useTransition } from "react";
-
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -15,63 +13,47 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { BACKEND_URL } from "@/lib/constants";
-import { useSession } from "next-auth/react";
-import ButtonLoading from "@/components/ButtonLoading";
-import { useRouter } from "next/navigation";
+import { addProfileData, updateProfileData } from "@/actions/worker-profile";
+import { educationSchema } from "@/lib/schemas/sigin-schema";
+import { useModal } from "@/hooks/useModalStore";
 
-const formSchema = z.object({
-  institution: z.string().min(1),
-  degree: z.string().min(1),
-  major: z.string().min(1),
-  gradDate: z.string().min(1),
-});
+type AddEducationFormProps = {
+  data?: Education;
+  isEdit?: boolean;
+};
 
-interface AddNewEducationFormProps {
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-export function AddNewEducationForm({ setIsOpen }: AddNewEducationFormProps) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-
-  const { data: session } = useSession();
-  const [submitError, setSubmitError] = useState("");
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+export function AddEducationForm({ data, isEdit }: AddEducationFormProps) {
+  const { onClose } = useModal();
+  const form = useForm<z.infer<typeof educationSchema>>({
+    resolver: zodResolver(educationSchema),
     defaultValues: {
-      institution: "",
-      degree: "",
-      gradDate: "",
-      major: "",
+      institution: data?.institution ?? "",
+      degree: data?.degree ?? "",
+      gradDate: data?.gradDate ?? "",
+      major: data?.major ?? "",
     },
   });
 
-  const isLoading = form.formState.isSubmitting;
+  const {
+    formState: { isSubmitting },
+  } = form;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof educationSchema>) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/education`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.accessToken}`,
-        },
-        body: JSON.stringify({ ...values, userId: session?.user?.id }),
-      });
-      if (res.ok) {
-        setIsOpen(false);
-        startTransition(() => {
-          // Refresh the current route and fetch new data
-          // from the server without losing
-          // client-side browser or React state.
-          router.refresh();
-        });
-      } else {
-        setSubmitError("An unexpected error occurred.");
-      }
+      isEdit
+        ? await updateProfileData({
+            section: "education",
+            values: { ...values, id: data?.id } as Education,
+          })
+        : await addProfileData({
+            section: "education",
+            values: values,
+          });
+
+      form.reset();
+      onClose();
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
   };
 
@@ -132,24 +114,10 @@ export function AddNewEducationForm({ setIsOpen }: AddNewEducationFormProps) {
                 </FormItem>
               )}
             />
-            {submitError && <p className="text-red-500">{submitError}</p>}
             <div className="pt-6 space-x-2 flex items-center justify-end w-full">
-              {isLoading ? (
-                <ButtonLoading />
-              ) : (
-                <>
-                  <Button
-                    variant="destructive"
-                    className="border-1"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={isLoading}>
-                    Save
-                  </Button>
-                </>
-              )}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Saving.." : "Save"}
+              </Button>
             </div>
           </form>
         </Form>

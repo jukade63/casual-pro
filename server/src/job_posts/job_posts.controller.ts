@@ -6,7 +6,7 @@ import { JobType } from './entities/job_post.entity';
 import { Role } from 'src/role/role.decorator';
 import { RoleGuard } from 'src/role/role.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { UserType } from 'src/user/types/user-type.type';
+import { UserType } from 'src/user/types/user-type';
 
 @Controller('job-posts')
 export class JobPostsController {
@@ -48,7 +48,6 @@ export class JobPostsController {
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {   
-     
     return this.jobPostsService.findOne(id);
   }
 

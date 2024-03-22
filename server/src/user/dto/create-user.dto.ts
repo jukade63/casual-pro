@@ -1,5 +1,5 @@
 import { IsString, IsEmail, IsEnum, IsOptional, IsInt } from 'class-validator';
-import { UserType } from '../types/user-type.type';
+import { UserType } from '../types/user-type';
 
 
 export class CreateUserDto {

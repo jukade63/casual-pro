@@ -27,7 +27,7 @@ export default function Header({ jobPost }: HeaderProps) {
         </div>
         <div className="flex gap-2">
           <MapPin color="white" size={18} />
-          <div className="text-gray-100 text-sm mb-3">{jobPost?.location[2]}</div>
+          <div className="text-gray-100 text-sm mb-3">{jobPost?.location.join(", ")}</div>
         </div>
         <div className="flex gap-2">
           <Clock color="white" size={18} />
@@ -38,7 +38,7 @@ export default function Header({ jobPost }: HeaderProps) {
       </div>
       {/* <Button className="max-w-[200px] mt-auto mb-2">APPLY FOR THIS JOB</Button> */}
       <ApplyButton jobPostId={jobPost?.id}/>
-      <AddToFavoriteButton jobPostId={jobPost.id} />
+      <AddToFavoriteButton jobId={jobPost?.job?.id} />
     </div>
   );
 }

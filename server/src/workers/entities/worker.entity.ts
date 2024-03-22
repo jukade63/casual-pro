@@ -16,7 +16,7 @@ export class Worker extends AbstractEntity<Worker> {
   @Column({ type: 'timestamptz', nullable: true })
   availableTo: string;
   
-  @OneToOne(() => User)
+  @OneToOne(() => User, {onDelete: 'CASCADE'})
   @JoinColumn()
   user: User;
 

@@ -3,6 +3,7 @@ import { AddNewEducationModal } from "@/components/worker/profile/AddNewEducatio
 import React, { useEffect, useState } from "react";
 import EditProfileModal from "@/components/worker/profile/EditProfileModal";
 import ConfirmModal from "@/components/ConfirmModal";
+import UpdateDataModal from "@/components/UpdateDataModal";
 
 export default function ModalProvider() {
   const [isMounted, setIsMounted] = useState(false);
@@ -14,9 +15,9 @@ export default function ModalProvider() {
 
   return (
     <>
-      <AddNewEducationModal />
       <EditProfileModal />
       <ConfirmModal/>
+      <UpdateDataModal/>
     </>
   );
 }

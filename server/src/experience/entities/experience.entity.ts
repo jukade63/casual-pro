@@ -13,6 +13,9 @@ export class Experience extends AbstractEntity<Experience> {
   company: string;
 
   @Column()
+  description: string;
+
+  @Column()
   startDate: Date;
 
   @Column()

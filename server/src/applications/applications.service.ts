@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException} from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException} from '@nestjs/common';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,8 +26,6 @@ export class ApplicationsService {
   ) { }
 
   async create(userId: number, jobPostId: number) {
-
-    console.log({userId});
     
     const worker = await this.workerRepository.findOne({where: { user: { id: userId } } })
     
@@ -97,7 +95,29 @@ export class ApplicationsService {
     return await this.applicationsRepository.save({ ...application, ...updateApplicationDto })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} application`;
+  async remove(id: number) {
+    const application = await this.applicationsRepository.findOne({
+      where: { id },
+    })
+
+    const jobPost = await this.jobPostRepository.findOne({
+      where: { applications: {id: application.id} },
+    })
+    
+    const currentDate = new Date();
+    const startDate = new Date(jobPost.startDate);
+    const oneWeekLater = new Date();
+    oneWeekLater.setDate(currentDate.getDate() + 7);
+
+    if (application.status === 'accepted') {
+      throw new BadRequestException('Application cannot be deleted as it has been accepted');
+      
+    }
+    
+    if ((currentDate <= startDate) && (startDate <= oneWeekLater)) {
+      throw new BadRequestException('Application cannot be deleted as the start date is within 1 week');
+    }
+    return await this.applicationsRepository.delete({ id })
+
   }
 }

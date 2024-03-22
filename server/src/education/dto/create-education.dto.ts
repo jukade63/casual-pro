@@ -9,6 +9,6 @@ export class CreateEducationDto {
     major: string;
     @IsNotEmpty()
     gradDate: Date;
-    @IsNotEmpty({message: 'userId is required'})
+    @IsNotEmpty()
     userId: number;
 }

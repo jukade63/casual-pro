@@ -5,7 +5,6 @@ import { BACKEND_URL } from "@/lib/constants";
 import { revalidatePath } from "next/cache";
 
 export default async function addToFavorites(jobId: number) {
-    console.log({jobId});
     
     const session = await getSession()
     try {

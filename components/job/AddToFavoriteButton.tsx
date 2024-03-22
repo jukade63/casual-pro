@@ -5,17 +5,17 @@ import { Button } from "../ui/button";
 import addToFavorites from "@/actions/add-to-favorites";
 
 export default function AddToFavoriteButton({
-    jobPostId,
+    jobId,
   }: {
-    jobPostId: number | undefined;
+    jobId: number | undefined;
   }) {
     const [isPending, startTransition] = useTransition();
     const handleAddToFavorite = async () => {
-      console.log({jobPostId});
       
-      if (jobPostId) {
+      if (jobId) {
         try {
-          await addToFavorites(jobPostId);
+          await addToFavorites(jobId);
+          alert("Added to favorites");
         } catch (error) {
           if (error instanceof Error) {
             alert(error.message);
@@ -25,7 +25,7 @@ export default function AddToFavoriteButton({
     };
     return (
       <form action={()=> startTransition(handleAddToFavorite)}>
-        <Button className="max-w-[200px] mt-auto mb-2" disabled={isPending}>{isPending ? "PROCESSING..." : "ADD TO FAVORITES"}</Button>
+        <Button variant = 'outline' className="max-w-[200px] mt-auto mb-2 text-white border-2 border-white" disabled={isPending}>{isPending ? "PROCESSING..." : "ADD TO FAVORITES"}</Button>
       </form>
     );
   }

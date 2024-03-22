@@ -1,17 +1,18 @@
 import { formatDateTimeRange } from "@/lib/functions.ts/formatDateTimeRange";
-import { format, formatDistanceToNow } from "date-fns";
+import { format, formatDistance, formatDistanceToNow } from "date-fns";
 import { Calendar, MapPin } from "lucide-react";
 import React from "react";
 import { Button } from "react-day-picker";
+import CancelApplicationButton from "./CancelApplicationButton";
 
 export default function ApplicationItem({
   application,
 }: {
   application: Application;
-  isInFavorites: boolean
+  isInFavorites: boolean;
 }) {
   const { jobPost, status } = application;
-  const {business} = jobPost
+  const { business } = jobPost;
 
   const statusColor =
     status === "accepted"
@@ -44,7 +45,13 @@ export default function ApplicationItem({
         <p className="text-sm truncate text-gray-500">{jobPost.description}</p>
         <p className="text-sm">
           <Calendar size={16} className="inline-block pb-1" />{" "}
-          {formatDateTimeRange(jobPost.startDate, jobPost.endDate)}
+          {formatDateTimeRange(jobPost.startDate, jobPost.endDate)}{" "}
+          <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md text-gray-500 text-xs">
+            will expire in{" "}
+            {formatDistance(new Date(jobPost.endDate), new Date(), {
+              addSuffix: true,
+            })}
+          </span>
         </p>
         <p className="text-sm">
           <MapPin size={16} className="inline-block pb-1" />{" "}
@@ -52,7 +59,7 @@ export default function ApplicationItem({
         </p>
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center relative">
         <div className="space-y-1 py-2 bg-gray-200 w-full px-2">
           <h3 className="text-md font-semibold">Posted By:</h3>
           <div className="flex gap-4 items-center">
@@ -60,6 +67,9 @@ export default function ApplicationItem({
             <p className="text-xs ">email : {business?.user.email}</p>
             <p className="text-xs ">phone : {business?.user.phoneNumber}</p>
           </div>
+        </div>
+        <div className="absolute bottom-2 right-2">
+          <CancelApplicationButton applicationId={application.id} />
         </div>
         {/* {isInFavorites && (
           <form action={removeFromFavorites.bind(null, application?.jobPost?.job?.id?.toString())}>

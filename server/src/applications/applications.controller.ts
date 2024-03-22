@@ -4,7 +4,7 @@ import { UpdateApplicationDto } from './dto/update-application.dto';
 import { RoleGuard } from 'src/role/role.guard';
 import { Role } from 'src/role/role.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { UserType } from 'src/user/types/user-type.type';
+import { UserType } from 'src/user/types/user-type';
 import { NotificationGateway } from 'src/notification/notification.gateway';
 import { Notification } from 'src/notification/entities/notification.entity';
 import { NotificationService } from 'src/notification/notification.service';
@@ -63,8 +63,13 @@ export class ApplicationsController {
     return this.applicationsService.update(id, updateApplicationDto);
   }
 
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
+  @Role([UserType.Worker])
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.applicationsService.remove(+id);
+  remove(
+    @Param('id', ParseIntPipe) id: number
+    ) {
+    return this.applicationsService.remove(id);
   }
 }

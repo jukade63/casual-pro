@@ -1,7 +1,7 @@
 import { Body, Controller, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { UserType } from 'src/user/types/user-type.type';
+import { UserType } from 'src/user/types/user-type';
 import { BusinessesService } from "src/businesses/businesses.service";
 import { WorkersService } from "src/workers/workers.service";
 import { RefreshGuard } from './refresh.guard';

@@ -4,5 +4,5 @@ export class CreateExperienceDto {
     company: string
     startDate: Date
     endDate: Date
-    workerId: number
+    userId: number
 }

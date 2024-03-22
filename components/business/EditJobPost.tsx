@@ -37,10 +37,11 @@ import { concatDateTime } from "@/lib/functions.ts/concatDateTime";
 import { updateJobPost } from "@/lib/api-requests/update-job-post";
 import { useRouter } from "next/navigation";
 
+export type FormFields = z.infer<typeof jobPostSchema>
 export default function EditJobPost({ jobPost }: { jobPost: JobPost }) {
   
   const router = useRouter();
-  const form = useForm<z.infer<typeof jobPostSchema>>({
+  const form = useForm<FormFields>({
     resolver: zodResolver(jobPostSchema),
     defaultValues: {
       title: jobPost.title,

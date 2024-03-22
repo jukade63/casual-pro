@@ -1,15 +1,14 @@
+import { AbstractEntity } from 'src/database/Abstract.entity';
 import { Worker } from 'src/workers/entities/worker.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne } from 'typeorm';
 
 export enum SkillLevel {
-  BEGINNER = 'Beginner',
+  BEGINNER = 'Basic',
   INTERMEDIATE = 'Intermediate',
   ADVANCED = 'Advanced',
 }
 @Entity()
-export class Skills extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class Skills extends AbstractEntity<Skills> {
 
   @Column()
   skillName: string;

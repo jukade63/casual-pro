@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEducationDto } from './dto/create-education.dto';
 import { UpdateEducationDto } from './dto/update-education.dto';
 import { Repository } from 'typeorm';
@@ -20,7 +20,7 @@ export class EducationService {
     const worker = await this.workerRepository.findOne({ where: { user: {id: createEducationDto.userId} } });
     
     if (!worker) {
-      throw new NotFoundException(`No worker found for ID ${createEducationDto.userId}`);
+      throw new NotFoundException(`wprker not found`);
       
     }
     const newEducation = this.educationRepository.create({
@@ -30,7 +30,7 @@ export class EducationService {
     return await this.educationRepository.save(newEducation);
   }
 
-  async findAll(userId: number) {
+  async findByWorker(userId: number) {
     const worker = await this.workerRepository.findOne({ where: { user: {id: userId} } });
     if (!worker) {
       throw new NotFoundException(`No worker found for ID ${userId}`);
@@ -45,35 +45,18 @@ export class EducationService {
   }
 
   async update(id: number, updateEducationDto: UpdateEducationDto) {
-    const { userId, ...updateData } = updateEducationDto;
-
-    const worker = await this.workerRepository.findOne({ where: { user: {id: updateEducationDto.userId} } });
-    if (!worker) {
-      throw new NotFoundException(`No worker found for ID ${updateEducationDto.userId}`);
-      
-    }
-
-    const education = await this.educationRepository.findOne({ where: { id, worker: { id: worker.id } } });
-
+    const education = await this.educationRepository.findOne({ where: { id } });
     if (!education) {
-      throw new NotFoundException(`No education found for ID ${id} and/or worker with ID ${worker.id}`);
+      throw new BadRequestException("Bad Request");
     }
-
-    const updatedEducation = { ...education, ...updateData };
+    const updatedEducation = { ...education, ...updateEducationDto };
     return await this.educationRepository.save(updatedEducation);
 
   }
 
-  async remove(id: string, userId: string) {
-    const parsedId = parseInt(id, 10)
-    const parsedUserId = parseInt(userId, 10)
-    const worker = await this.workerRepository.findOne({ where: { user: {id: parsedUserId} } });
-    const education = await this.educationRepository.findOne({ where: { id: parsedId, worker: { id: worker.id } } });
+  async remove(id: number) {
 
-    if (!education) {
-      throw new NotFoundException(`No education found for ID ${id} and/or worker with ID ${worker.id}`);
-    }
-
+    const education = await this.educationRepository.findOne({ where: { id } });
     await this.educationRepository.remove(education);
 
     return { message: 'Education record removed successfully' };

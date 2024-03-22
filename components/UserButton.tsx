@@ -18,7 +18,7 @@ import { Button } from "./ui/button";
 
 export function UserButton() {
   const { data: session } = useSession();
-  const user = session?.user;
+  const user = session?.user;  
   
   if (!user) {
     return (

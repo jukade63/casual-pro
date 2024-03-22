@@ -1,13 +1,19 @@
-import { IsOptional } from "class-validator"
+import { IsEnum, IsNotEmpty, IsOptional } from "class-validator"
+import { SkillLevel } from "../entities/skill.entity"
 export class CreateSkillDto {
-    skill_name: string
+    @IsNotEmpty()
+    skillName: string
+
+    @IsEnum(SkillLevel)
+    skillLevel: SkillLevel
 
     @IsOptional()
     certification: string
 
     @IsOptional()
-    cert_link: string
+    certLink: string
 
-    workerId: number
+    @IsNotEmpty()
+    userId: number
     
 }
